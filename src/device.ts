@@ -448,9 +448,14 @@ export class DeviceClient {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': `${bodyString.length}`,
+        'Content-Length': bodyString.length.toString(),
       },
       body: bodyString,
+    }).then(response => {
+      this.log(`Response: ${response.status} ${response.statusText}`);
+      this.log(`Response body: ${response.body}`);
+      this.log(`Response headers: ${response}`);
+      return response;
     });
   }
 }
