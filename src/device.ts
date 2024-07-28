@@ -440,6 +440,7 @@ export class DeviceClient {
         timestamp: Math.floor(new Date().valueOf() / 1000),
       };
     }
+    this.log(`POSTing to ${this.ipAddress}: ${JSON.stringify(body)}`);
     const response = await fetch(`http://${this.ipAddress}:${this.port}/beaver/command`, {
       method: 'POST',
       body: JSON.stringify(body),
