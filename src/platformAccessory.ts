@@ -1,7 +1,7 @@
 import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
-
-import {HomebridgeMHIWFRACPlatform} from './platform.js';
 import {DeviceClient} from './device';
+import {HomebridgeMHIWFRACPlatform} from './platform';
+
 
 /**
  * Platform Accessory
