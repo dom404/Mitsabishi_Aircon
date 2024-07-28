@@ -423,39 +423,42 @@ export class DeviceClient {
   }
 
   async call(command: string, contents: string|null = null): Promise<Response> {
-    let body;
+    let data;
     if (contents) {
-      body = {
+      data = {
         apiVer: '1.0',
-        command,
+        command: command,
         deviceId: this.deviceId,
         operatorId: this.operatorId,
         timestamp: Math.floor(new Date().valueOf() / 1000),
         contents,
       };
     } else {
-      body = {
+      data = {
         apiVer: '1.0',
-        command,
+        command: command,
         deviceId: this.deviceId,
         operatorId: this.operatorId,
         timestamp: Math.floor(new Date().valueOf() / 1000),
       };
     }
-    const bodyString = JSON.stringify(body);
-    this.log(`POSTing to ${this.ipAddress}:${this.port} ${bodyString}`);
-    return await fetch(`http://${this.ipAddress}:${this.port}/beaver/command`, {
+    const body = JSON.stringify(data);
+    const length = body.length.toString();
+    const url = `http://${this.ipAddress}:${this.port}/beaver/command`;
+    this.log(`POSTing to ${url}: ${body} (${length} bytes)`);
+    return await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': bodyString.length.toString(),
+        'Content-Length': body.length.toString(),
       },
-      body: bodyString,
+      body: body,
     }).then(response => {
-      this.log(`Response: ${response.status} ${response.statusText}`);
-      this.log(`Response body: ${response.body}`);
-      this.log(`Response headers: ${response}`);
-      return response;
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+      } else {
+        return response;
+      }
     });
   }
 }
