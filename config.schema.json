@@ -1,0 +1,16 @@
+{
+  "pluginAlias": "HomebridgeMHIWFRACPlatform",
+  "pluginType": "platform",
+  "singular": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Operator ID",
+        "type": "string",
+        "required": true,
+        "default": "????"
+      }
+    }
+  }
+}
