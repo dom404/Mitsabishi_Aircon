@@ -442,14 +442,15 @@ export class DeviceClient {
         timestamp: Math.floor(new Date().valueOf() / 1000),
       };
     }
-    this.log(`POSTing to ${this.ipAddress}: ${JSON.stringify(body)}`);
-    const response = await fetch(`http://${this.ipAddress}:${this.port}/beaver/command`, {
+    const bodyString = JSON.stringify(body);
+    this.log(`POSTing to ${this.ipAddress}:${this.port} ${bodyString}`);
+    return await fetch(`http://${this.ipAddress}:${this.port}/beaver/command`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Content-Length': `${bodyString.length}`,
       },
-      body: JSON.stringify(body),
+      body: bodyString,
     });
-    return response;
   }
 }

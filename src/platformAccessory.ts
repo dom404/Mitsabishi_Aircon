@@ -31,7 +31,7 @@ export class WFRACAccessory {
   constructor(
     private readonly platform: HomebridgeMHIWFRACPlatform,
     private readonly accessory: PlatformAccessory,
-    private readonly ip: string,
+    ip: string,
   ) {
     this.deviceName = accessory.context.device.name;
     this.ipAddress = ip;
