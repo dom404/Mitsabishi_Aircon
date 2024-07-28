@@ -20,7 +20,7 @@ export class HomebridgeMHIWFRACPlatform implements DynamicPlatformPlugin {
     this.Service = api.hap.Service;
     this.Characteristic = api.hap.Characteristic;
 
-    this.log.debug('Finished initializing platform:', this.config.name);
+    this.log.info('Finished initializing platform:', this.config.name);
 
     // Homebridge 1.8.0 introduced a `log.success` method that can be used to log success messages
     // For users that are on a version prior to 1.8.0, we need a 'polyfill' for this method
@@ -56,11 +56,13 @@ export class HomebridgeMHIWFRACPlatform implements DynamicPlatformPlugin {
    * must not be registered again to prevent "duplicate UUID" errors.
    */
   discoverDevices() {
+    this.log('Discovering devices...');
     const bonjourService = bonjour();
 
     // Start looking for devices advertising _beaver._tcp service
     const browser = bonjourService.find({type: 'beaver', protocol: 'tcp'},
       (service) => {
+        this.log('Found service:', service.name, service.addresses);
         service.addresses.forEach((address) => {
           this.log.info('Found device:', service.name, address);
           // Generate a UUID for the accessory

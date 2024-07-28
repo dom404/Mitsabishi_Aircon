@@ -52,7 +52,7 @@ export class WFRACAccessory {
 
     setInterval(() => {
       this.device.getDeviceStatus().then((status) => {
-        this.platform.log.debug(`Status: ${JSON.stringify(status)}`);
+        this.platform.log.info(`Status: ${JSON.stringify(status)}`);
       });
     }, 10000);
 
@@ -75,7 +75,7 @@ export class WFRACAccessory {
 
   setActive(value: CharacteristicValue) {
     // this.checkValid();
-    this.platform.log.debug(`Setting power to ${value}`);
+    this.platform.log.info(`Setting power to ${value}`);
     const newStatus = this.device.status;
     newStatus.operation = value === this.platform.Characteristic.Active.ACTIVE;
     this.device.setDeviceStatus(newStatus);
