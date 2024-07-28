@@ -408,19 +408,21 @@ export class DeviceClient {
 
   async getDeviceStatus(): Promise<DeviceStatus> {
     this.log(`Getting device status from ${this.ipAddress}:${this.port}`);
-    const response = this.call('getAirconStat');
-    this.status = DeviceStatus.fromBase64(await response);
+    await this.call('getAirconStat')
+      .then(response => response.json())
+      .then(data => this.status = DeviceStatus.fromBase64(data.contents.airconStat));
     return this.status;
   }
 
   async setDeviceStatus(status: DeviceStatus): Promise<DeviceStatus> {
     this.log(`Setting device status to ${JSON.stringify(status)}`);
-    const response = this.call('setAirconStat', status.toBase64());
-    this.status = DeviceStatus.fromBase64(await response);
+    await this.call('setAirconStat', status.toBase64())
+      .then(response => response.json())
+      .then(data => this.status = DeviceStatus.fromBase64(data.contents.airconStat));
     return this.status;
   }
 
-  async call(command: string, contents: string|null = null): Promise<string> {
+  async call(command: string, contents: string|null = null): Promise<Response> {
     let body;
     if (contents) {
       body = {
@@ -443,8 +445,11 @@ export class DeviceClient {
     this.log(`POSTing to ${this.ipAddress}: ${JSON.stringify(body)}`);
     const response = await fetch(`http://${this.ipAddress}:${this.port}/beaver/command`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(body),
     });
-    return response.json();
+    return response;
   }
 }
