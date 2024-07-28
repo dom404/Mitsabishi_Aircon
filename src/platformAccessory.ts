@@ -1,5 +1,5 @@
 import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
-import {DeviceClient} from './device.js';
+import {DeviceClient, DeviceStatus} from './device.js';
 import {HomebridgeMHIWFRACPlatform} from './platform.js';
 
 
@@ -57,15 +57,15 @@ export class WFRACAccessory {
       });
     }, 10000);
 
-    // this.airconService.getCharacteristic(this.platform.Characteristic.CurrentHeaterCoolerState)
-    //   .onGet(this.getCurrentHeaterCoolerState.bind(this));
+    this.airconService.getCharacteristic(this.platform.Characteristic.CurrentHeaterCoolerState)
+      .onGet(this.getCurrentHeaterCoolerState.bind(this));
     //
-    // this.airconService.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
-    //   .onGet(this.getTargetHeaterCoolerState.bind(this))
-    //   .onSet(this.setTargetHeaterCoolerState.bind(this));
-    //
-    // this.airconService.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
-    //   .onGet(this.getCurrentTemperature.bind(this));
+    this.airconService.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
+      .onGet(this.getTargetHeaterCoolerState.bind(this))
+      .onSet(this.setTargetHeaterCoolerState.bind(this));
+
+    this.airconService.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
+      .onGet(this.getCurrentTemperature.bind(this));
 
   }
 
@@ -79,6 +79,68 @@ export class WFRACAccessory {
     this.platform.log.info(`Setting power to ${value}`);
     const newStatus = this.device.status;
     newStatus.operation = value === this.platform.Characteristic.Active.ACTIVE;
+    this.device.setDeviceStatus(newStatus);
+  }
+
+  getCurrentTemperature(): CharacteristicValue {
+    // this.checkValid();
+    return this.device.status.indoorTemp;
+  }
+
+  getCurrentHeaterCoolerState(): CharacteristicValue {
+    // this.checkValid();
+    switch (this.device.status.operationMode) {
+      case DeviceStatus.OPERATION_MODES.auto:
+        return this.platform.Characteristic.CurrentHeaterCoolerState.IDLE; // TODO
+      case DeviceStatus.OPERATION_MODES.cool:
+        return this.platform.Characteristic.CurrentHeaterCoolerState.COOLING;
+      case DeviceStatus.OPERATION_MODES.heat:
+        return this.platform.Characteristic.CurrentHeaterCoolerState.HEATING;
+      case DeviceStatus.OPERATION_MODES.fan:
+        return this.platform.Characteristic.CurrentHeaterCoolerState.IDLE; // TODO
+      case DeviceStatus.OPERATION_MODES.dry:
+        return this.platform.Characteristic.CurrentHeaterCoolerState.IDLE; // TODO
+      default:
+        return this.platform.Characteristic.CurrentHeaterCoolerState.INACTIVE; // TODO
+    }
+  }
+
+  getTargetHeaterCoolerState(): CharacteristicValue {
+    // this.checkValid();
+    switch (this.device.status.operationMode) {
+      case DeviceStatus.OPERATION_MODES.auto:
+        return this.platform.Characteristic.TargetHeaterCoolerState.AUTO;
+      case DeviceStatus.OPERATION_MODES.cool:
+        return this.platform.Characteristic.TargetHeaterCoolerState.COOL;
+      case DeviceStatus.OPERATION_MODES.heat:
+        return this.platform.Characteristic.TargetHeaterCoolerState.HEAT;
+      case DeviceStatus.OPERATION_MODES.fan:
+        return this.platform.Characteristic.TargetHeaterCoolerState.AUTO; // TODO
+      case DeviceStatus.OPERATION_MODES.dry:
+        return this.platform.Characteristic.TargetHeaterCoolerState.AUTO; // TODO
+      default:
+        return this.platform.Characteristic.TargetHeaterCoolerState.AUTO; // TODO
+    }
+  }
+
+  setTargetHeaterCoolerState(value: CharacteristicValue) {
+    // this.checkValid();
+    this.platform.log.info(`Setting mode to ${value}`);
+    const newStatus = this.device.status;
+    switch (value) {
+      case this.platform.Characteristic.TargetHeaterCoolerState.AUTO:
+        newStatus.operationMode = DeviceStatus.OPERATION_MODES.auto;
+        break;
+      case this.platform.Characteristic.TargetHeaterCoolerState.COOL:
+        newStatus.operationMode = DeviceStatus.OPERATION_MODES.cool;
+        break;
+      case this.platform.Characteristic.TargetHeaterCoolerState.HEAT:
+        newStatus.operationMode = DeviceStatus.OPERATION_MODES.heat;
+        break;
+      default:
+        this.platform.log.error(`Invalid mode: ${value}`);
+        return;
+    }
     this.device.setDeviceStatus(newStatus);
   }
 }
