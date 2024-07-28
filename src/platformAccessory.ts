@@ -3,15 +3,10 @@ import {DeviceClient} from './device';
 import {HomebridgeMHIWFRACPlatform} from './platform';
 
 
-/**
- * Platform Accessory
- * An instance of this class is created for each accessory your platform registers
- * Each accessory may expose multiple services of different service types.
- */
 export class WFRACAccessory {
-  private deviceName: string;
-  private ipAddress: string;
-  private port = 80;
+  private readonly deviceName: string;
+  private readonly ipAddress: string;
+  private port = 51443;
   private operatorId = '12345';
 
   private device: DeviceClient;
