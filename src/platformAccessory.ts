@@ -12,21 +12,8 @@ export class WFRACAccessory {
   private device: DeviceClient;
 
   private thermostatService: Service;
-  private fanService: Service;
-  private dehumidifierService: Service;
-
-  // private currentState = {
-  //   TempInside: 21.5,
-  //   TempoOutside: 28.0,
-  //   TargetTemp: 21.5,
-  //   On: false,
-  //   Mode: Auto, Cool, Heat, Fan, Dry
-  //   FanSpeed: Auto, Silent, Low, Medium, High,
-  //   SwingModeVertical: All, Up, MiddleUp, MiddleDown, Down,
-  //   SwingModeHorizontal: All, Left, MiddleLeft, Middle, MiddleRight, Right, Inside, Outside,
-  //   Fan3D: false,
-  //   EmptyHouse: false,
-  // };
+  // private fanService: Service;
+  // private dehumidifierService: Service;
 
   constructor(
     private readonly platform: HomebridgeMHIWFRACPlatform,
@@ -50,8 +37,8 @@ export class WFRACAccessory {
     }, 10000);
 
     this.thermostatService = this.accessory.getService(this.platform.Service.Thermostat) || this.accessory.addService(this.platform.Service.Thermostat);
-    this.fanService = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
-    this.dehumidifierService = this.accessory.getService(this.platform.Service.HumidifierDehumidifier) || this.accessory.addService(this.platform.Service.HumidifierDehumidifier);
+    // this.fanService = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
+    // this.dehumidifierService = this.accessory.getService(this.platform.Service.HumidifierDehumidifier) || this.accessory.addService(this.platform.Service.HumidifierDehumidifier);
 
     // this.thermostatService.getCharacteristic(this.platform.Characteristic.Active)
     //   .onGet(this.getActive.bind(this))
@@ -74,17 +61,17 @@ export class WFRACAccessory {
 
 
 
-    this.dehumidifierService.getCharacteristic(this.platform.Characteristic.Active)
-      .onGet(this.getDehumidifierActive.bind(this))
-      .onSet(this.setDehumidifierActive.bind(this));
-
-    this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity)
-      .onGet(() => 50);
-    this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState)
-      .onGet(this.getCurrentHumidifierDehumidifierState.bind(this));
-    this.dehumidifierService.getCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState)
-      .onGet(this.getTargetHumidifierDehumidifierState.bind(this))
-      .onSet(this.setTargetHumidifierDehumidifierState.bind(this));
+    // this.dehumidifierService.getCharacteristic(this.platform.Characteristic.Active)
+    //   .onGet(this.getDehumidifierActive.bind(this))
+    //   .onSet(this.setDehumidifierActive.bind(this));
+    //
+    // this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity)
+    //   .onGet(() => 50);
+    // this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState)
+    //   .onGet(this.getCurrentHumidifierDehumidifierState.bind(this));
+    // this.dehumidifierService.getCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState)
+    //   .onGet(this.getTargetHumidifierDehumidifierState.bind(this))
+    //   .onSet(this.setTargetHumidifierDehumidifierState.bind(this));
 
 
   }
