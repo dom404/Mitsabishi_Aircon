@@ -408,35 +408,41 @@ export class DeviceClient {
 
   async getDeviceStatus(): Promise<DeviceStatus> {
     this.log(`Getting device status from ${this.ipAddress}:${this.port}`);
-    const response = await fetch(`http://${this.ipAddress}:${this.port}/getDeviceStatus`);
-    this.status = DeviceStatus.fromBase64(await response.text());
+    const response = this.call('getAirconStat');
+    this.status = DeviceStatus.fromBase64(await response);
     return this.status;
   }
 
   async setDeviceStatus(status: DeviceStatus): Promise<DeviceStatus> {
     this.log(`Setting device status to ${JSON.stringify(status)}`);
-    const response = await fetch(`http://${this.ipAddress}:${this.port}/setDeviceStatus`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(status),
-    });
-    this.status = DeviceStatus.fromBase64(await response.text());
+    const response = this.call('setAirconStat', status.toBase64());
+    this.status = DeviceStatus.fromBase64(await response);
     return this.status;
   }
 
-  async call(command: string, contents = null): Promise<void> {
-    const response = await fetch(`http://${this.ipAddress}:${this.port}/beaver/command`, {
-      method: 'POST',
-      body: JSON.stringify({
-        apiVer:'1.0',
+  async call(command: string, contents: string|null = null): Promise<string> {
+    let body;
+    if (contents) {
+      body = {
+        apiVer: '1.0',
         command,
         deviceId: this.deviceId,
         operatorId: this.operatorId,
         timestamp: Math.floor(new Date().valueOf() / 1000),
         contents,
-      }),
+      };
+    } else {
+      body = {
+        apiVer: '1.0',
+        command,
+        deviceId: this.deviceId,
+        operatorId: this.operatorId,
+        timestamp: Math.floor(new Date().valueOf() / 1000),
+      };
+    }
+    const response = await fetch(`http://${this.ipAddress}:${this.port}/beaver/command`, {
+      method: 'POST',
+      body: JSON.stringify(body),
     });
     return response.json();
   }
