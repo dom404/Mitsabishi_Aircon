@@ -31,10 +31,11 @@ export class WFRACAccessory {
   constructor(
     private readonly platform: HomebridgeMHIWFRACPlatform,
     private readonly accessory: PlatformAccessory,
+    private readonly ip: string,
   ) {
     this.deviceName = accessory.context.device.name;
-    this.ipAddress = accessory.context.device.ipAddress;
-    this.device = new DeviceClient(this.ipAddress, this.port, this.operatorId, this.deviceName);
+    this.ipAddress = ip;
+    this.device = new DeviceClient(this.ipAddress, this.port, this.operatorId, this.deviceName, this.platform.log);
 
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!

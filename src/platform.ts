@@ -62,9 +62,8 @@ export class HomebridgeMHIWFRACPlatform implements DynamicPlatformPlugin {
     // Start looking for devices advertising _beaver._tcp service
     const browser = bonjourService.find({type: 'beaver', protocol: 'tcp'},
       (service) => {
-        this.log('Found service:', service.name, service.addresses);
         service.addresses.forEach((address) => {
-          this.log.info('Found device:', service.name, address);
+          this.log.info('Discovered device:', service.name, address);
           // Generate a UUID for the accessory
           const uuid = this.api.hap.uuid.generate(service.name);
 
@@ -74,7 +73,7 @@ export class HomebridgeMHIWFRACPlatform implements DynamicPlatformPlugin {
           if (existingAccessory) {
           // Accessory exists, restore from cache
             this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
-            new WFRACAccessory(this, existingAccessory);
+            new WFRACAccessory(this, existingAccessory, address);
           } else {
           // Accessory does not exist, create a new one
             this.log.info('Adding new accessory:', service.name);
@@ -84,11 +83,10 @@ export class HomebridgeMHIWFRACPlatform implements DynamicPlatformPlugin {
             accessory.context.device = {
               name: service.name,
               uniqueId: uuid,
-              ip: address,
             };
 
             // Create the accessory handler
-            new WFRACAccessory(this, accessory);
+            new WFRACAccessory(this, accessory, address);
 
             // Register the accessory with Homebridge
             this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
