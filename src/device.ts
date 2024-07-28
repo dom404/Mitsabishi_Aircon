@@ -388,6 +388,36 @@ export class DeviceStatus {
   }
 }
 
+interface DeviceStatusResponse {
+  command: string;
+  apiVer: string;
+  operatorId: string;
+  deviceId: string;
+  timestamp: number;
+  result: number;
+  contents: {
+    airconId: string;
+    airconStat: string;
+    logStat: number;
+    updatedBy: string;
+    expires: number;
+    ledStat: number;
+    autoHeating: number;
+    highTemp: string;
+    lowTemp: string;
+    firmType: string;
+    wireless: {
+      firmVer: string;
+    };
+    mcu: {
+      firmVer: string;
+    };
+    timezone: string;
+    remoteList: string[];
+    numOfAccount: number;
+  };
+}
+
 export class DeviceClient {
   private readonly ipAddress: string;
   private readonly port: number;
@@ -421,7 +451,7 @@ export class DeviceClient {
     return this.status;
   }
 
-  async call(command: string, contents: string|null = null): Promise<{}> {
+  async call(command: string, contents: string|null = null): Promise<DeviceStatusResponse> {
     let data;
     if (contents) {
       data = {
