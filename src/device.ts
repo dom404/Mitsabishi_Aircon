@@ -444,21 +444,25 @@ export class DeviceClient {
     }
     const body = JSON.stringify(data);
     const length = body.length.toString();
-    const url = `http://${this.ipAddress}:${this.port}/beaver/command`;
-    this.log(`POSTing to ${url}: ${body} (${length} bytes)`);
-    return await fetch(url, {
+
+    const requestOptions = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': body.length.toString(),
+        'Content-Length': length,
       },
       body: body,
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
-      } else {
-        return response;
-      }
-    });
+    };
+    const url = `http://${this.ipAddress}:${this.port}/beaver/command`;
+    this.log('Request Options:', requestOptions);
+    this.log(`POSTing to ${url}: ${body} (${length} bytes)`);
+    return await fetch(url, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+        } else {
+          return response;
+        }
+      });
   }
 }
