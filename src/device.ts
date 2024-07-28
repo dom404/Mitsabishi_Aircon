@@ -410,7 +410,6 @@ export class DeviceClient {
   async getDeviceStatus(): Promise<DeviceStatus> {
     this.log(`Getting device status from ${this.ipAddress}:${this.port}`);
     await this.call('getAirconStat')
-      .then(response => response.json())
       .then(data => this.status = DeviceStatus.fromBase64(data.contents.airconStat));
     return this.status;
   }
@@ -418,12 +417,11 @@ export class DeviceClient {
   async setDeviceStatus(status: DeviceStatus): Promise<DeviceStatus> {
     this.log(`Setting device status to ${JSON.stringify(status)}`);
     await this.call('setAirconStat', status.toBase64())
-      .then(response => response.json())
       .then(data => this.status = DeviceStatus.fromBase64(data.contents.airconStat));
     return this.status;
   }
 
-  async call(command: string, contents: string|null = null): Promise<Response> {
+  async call(command: string, contents: string|null = null): Promise<{}> {
     let data;
     if (contents) {
       data = {
