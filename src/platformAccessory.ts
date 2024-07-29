@@ -200,10 +200,16 @@ export class WFRACAccessory {
     if (this.refreshTimeout) {
       clearTimeout(this.refreshTimeout);
     }
-
-    this.device.getDeviceStatus().then((status) => {
-      this.platform.log.info(`Status: ${JSON.stringify(status)}`);
+    this.device.getDeviceStatus().then( () => {
+      this.updateStatus();
+    }).catch((error) => {
+      this.platform.log.error(`Error getting status for ${this.deviceName}: ${error}`);
     });
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
+  }
+
+  updateStatus() {
+    this.platform.log(`Status for ${this.deviceName}: ${JSON.stringify(this.device.status)}`);
 
     if (this.device.status.indoorTemp) {
       this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.device.status.indoorTemp);
@@ -220,11 +226,11 @@ export class WFRACAccessory {
       targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
       currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
     } else if (this.device.status.operation && this.device.status.operationMode === DeviceStatus.OPERATION_MODE_HEAT) {
-        this.platform.log.info('Heating');
+      this.platform.log.info('Heating');
       targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
       currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
     } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODE_AUTO) {
-        this.platform.log.info('Auto');
+      this.platform.log.info('Auto');
       targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
       if (this.device.status.isAutoHeating) {
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
@@ -243,9 +249,6 @@ export class WFRACAccessory {
 
     this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, currentHeatingCoolingState);
     this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, targetHeatingCoolingState);
-
-    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
-
   }
 
 }

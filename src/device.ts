@@ -479,7 +479,6 @@ export class DeviceClient {
   }
 
   async getDeviceStatus(): Promise<DeviceStatus> {
-    this.log(`Getting device status from ${this.ipAddress}:${this.port}`);
     await this.call('getAirconStat')
       .then(data => this.status = DeviceStatus.fromBase64(data.contents.airconStat));
     return this.status;
