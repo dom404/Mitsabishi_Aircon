@@ -260,6 +260,20 @@ export class WFRACAccessory {
     }
 
     this.platform.log.info('Setting dehumidifier active to', value);
+
+    switch (value) {
+      case this.platform.Characteristic.Active.INACTIVE:
+        this.device.setOperationMode(0);
+        break;
+      case this.platform.Characteristic.Active.ACTIVE:
+        if (!this.device.status.operation) {
+          this.device.setOperation(true);
+        }
+        this.device.setOperationMode(4);
+        break;
+    }
+
+    this.platform.log.info('Setting dehumidifier active to', value);
     if (!this.device.status.operation) {
       this.device.setOperation(true);
     }
