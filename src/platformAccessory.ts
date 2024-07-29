@@ -4,6 +4,8 @@ import {HomebridgeMHIWFRACPlatform} from './platform.js';
 
 
 export class WFRACAccessory {
+  static REFRESH_INTERVAL = 10000;
+
   private readonly deviceName: string;
   private readonly ipAddress: string;
   private readonly port = 51443;
@@ -36,7 +38,8 @@ export class WFRACAccessory {
       .setCharacteristic(this.platform.Characteristic.SerialNumber, this.deviceName);
 
     this.thermostatService = this.accessory.getService(this.platform.Service.Thermostat) || this.accessory.addService(this.platform.Service.Thermostat);
-    this.fanService = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2); // TODO maybe this should be AirPurifier so we have an extra button for the fan (to switch to manual mode)
+    this.fanService = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
+    // TODO maybe this should be AirPurifier so we have an extra button for the fan (to switch to manual mode)
     this.dehumidifierService = this.accessory.getService(this.platform.Service.HumidifierDehumidifier) || this.accessory.addService(this.platform.Service.HumidifierDehumidifier);
 
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TemperatureDisplayUnits)
@@ -66,7 +69,7 @@ export class WFRACAccessory {
     this.dehumidifierService.getCharacteristic(this.platform.Characteristic.Active)
       .onSet(this.setHumidifierActive.bind(this));
 
-    // TODO we do not implement the target humidifier state, since we only accept DEHUMIDIFIER as a valid value.
+    // We do not implement the target humidifier state, since we only accept DEHUMIDIFIER as a valid value.
 
     this.refreshStatus();
 
@@ -81,7 +84,7 @@ export class WFRACAccessory {
     }).catch((error) => {
       this.platform.log.error(`Error getting status for ${this.deviceName}: ${error}`);
     });
-    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), WFRACAccessory.REFRESH_INTERVAL);
   }
 
   updateStatus() {
@@ -195,7 +198,7 @@ export class WFRACAccessory {
         break;
     }
 
-    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), WFRACAccessory.REFRESH_INTERVAL);
   }
 
   setTargetTemperature(value: CharacteristicValue) {
@@ -206,7 +209,7 @@ export class WFRACAccessory {
     this.platform.log.info(`Setting ${this.deviceName} temperature to`, value);
     this.device.setPresetTemp(value as number);
 
-    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), WFRACAccessory.REFRESH_INTERVAL);
   }
 
   setFanActive(value: CharacteristicValue) {
@@ -236,7 +239,7 @@ export class WFRACAccessory {
         break;
     }
 
-    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), WFRACAccessory.REFRESH_INTERVAL);
   }
 
   setTargetFanState(value: CharacteristicValue) {
@@ -250,11 +253,11 @@ export class WFRACAccessory {
         this.device.setAirflow(0);
         break;
       case this.platform.Characteristic.TargetFanState.MANUAL:
-        // TODO ??? Maybe just noop
+        // Nothing to do...
         break;
     }
 
-    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), WFRACAccessory.REFRESH_INTERVAL);
   }
 
   setRotationSpeed(value: CharacteristicValue) {
@@ -275,7 +278,7 @@ export class WFRACAccessory {
       this.device.setOperation(true);
     }
 
-    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), WFRACAccessory.REFRESH_INTERVAL);
   }
 
   setHumidifierActive(value: CharacteristicValue) {
@@ -298,7 +301,7 @@ export class WFRACAccessory {
         break;
     }
 
-    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), WFRACAccessory.REFRESH_INTERVAL);
   }
 }
 
