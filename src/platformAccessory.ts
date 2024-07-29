@@ -130,11 +130,7 @@ export class WFRACAccessory {
         currentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING;
         targetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER;
 
-        if (this.device.status.presetTemp! < this.device.status.indoorTemp!) {
-          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-        } else {
-          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-        }
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL; // Depending on the temperature, the device will be blowing or not.
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
 
         currentFanActive = this.platform.Characteristic.Active.INACTIVE;
@@ -250,6 +246,11 @@ export class WFRACAccessory {
     }
 
     this.platform.log.info('Setting fan speed to', value);
+
+    if (!this.device.status.operation) {
+      this.device.setOperation(true);
+      this.device.setOperationMode(3);
+    }
     this.device.setAirflow(Math.round(value as number / 25));
   }
 
