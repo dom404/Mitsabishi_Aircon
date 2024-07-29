@@ -216,21 +216,21 @@ export class WFRACAccessory {
       let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
       let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
 
-      if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.cool) {
+      if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.COOL) {
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
-      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.heat) {
+      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.HEAT) {
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
-      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.auto) {
+      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.AUTO) {
         // TODO
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
-      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.fan) {
+      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.FAN) {
         // TODO
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
-      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.dry) {
+      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.DRY) {
         // TODO
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;

@@ -26,11 +26,11 @@ export class DeviceStatus {
   };
 
   static OPERATION_MODES: {
-    auto: 0;
-    cool: 1;
-    heat: 2;
-    fan: 3;
-    dry: 4;
+    AUTO: 0;
+    COOL: 1;
+    HEAT: 2;
+    FAN: 3;
+    DRY: 4;
   };
 
   static VERTICAL_POSITIONS: {
