@@ -39,7 +39,7 @@ export class WFRACAccessory {
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TemperatureDisplayUnits)
       .onGet(() => this.platform.Characteristic.TemperatureDisplayUnits.CELSIUS);
     this.thermostatService.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
-      .setProps({minValue: DeviceStatus.indoorTempList.at(0), maxValue: DeviceStatus.indoorTempList.at(-1)});
+      .setProps({minValue: DeviceStatus.indoorTempList.at(0), maxValue: DeviceStatus.indoorTempList.at(-1), minStep: 0.1});
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
       .setProps({minValue: 18, maxValue: 30, minStep: 0.5});
     this.refreshStatus();
@@ -220,6 +220,8 @@ export class WFRACAccessory {
 
     let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
     let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+
+    this.platform.log(`Status for ${this.deviceName}: Operation: ${this.device.status.operation}, Operation Mode: ${this.device.status.operationMode}, Auto Heating: ${this.device.status.isAutoHeating}`)
 
     if (this.device.status.operation && this.device.status.operationMode === DeviceStatus.OPERATION_MODE_COOL) {
       this.platform.log.info('Cooling');
