@@ -183,6 +183,7 @@ export class WFRACAccessory {
           this.device.setOperation(true);
         }
         this.device.setOperationMode(0);
+        this.device.setAirflow(0);
         break;
     }
   }
