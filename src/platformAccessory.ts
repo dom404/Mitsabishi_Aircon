@@ -160,7 +160,6 @@ export class WFRACAccessory {
 
     this.fanService.updateCharacteristic(this.platform.Characteristic.Active, currentFanActive);
     this.fanService.updateCharacteristic(this.platform.Characteristic.CurrentFanState, currentFanState);
-    this.fanService.updateCharacteristic(this.platform.Characteristic.TargetFanState, targetFanState);
 
     const fanSpeed = this.device.status.airFlow * 25;
     if (fanSpeed === 0 || this.device.status.operationMode === 4) {
@@ -170,6 +169,7 @@ export class WFRACAccessory {
     }
 
     this.fanService.updateCharacteristic(this.platform.Characteristic.RotationSpeed, fanSpeed);
+    this.fanService.updateCharacteristic(this.platform.Characteristic.TargetFanState, targetFanState);
 
     this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.Active, currentDehumidifierActive);
     this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState, currentHumidifierDehumidifierState);
