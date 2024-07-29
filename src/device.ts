@@ -542,6 +542,8 @@ export class DeviceClient {
     }
     const body = JSON.stringify(data);
 
+    this.log(`Method: POST, URL: http://${this.ipAddress}:${this.port}/beaver/command, Body: ${body}`)
+
     // We must use axios, because fetch lowercases the headers, which the device does not like
     return await axios.post(`http://${this.ipAddress}:${this.port}/beaver/command`, body)
       .then(response => {
