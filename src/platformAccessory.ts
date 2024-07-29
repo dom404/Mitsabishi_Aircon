@@ -222,7 +222,7 @@ export class WFRACAccessory {
     let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
 
     if (this.device.status.operation) {
-      if (this.device.status.operationMode === 0) {
+      if (this.device.status.operationMode === 0 || this.device.status.operationMode === -1) {
         this.platform.log.info('Auto');
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
         if (this.device.status.isAutoHeating) {
