@@ -109,9 +109,9 @@ export class WFRACAccessory {
 
   getCurrentHeatingCoolingState(): CharacteristicValue {
     // this.checkValid();
-    if (this.device.status === undefined || this.device.status.operationMode === undefined) {
-      return this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-    }
+    this.platform.log.info(`Current status: ${this.device.status}`);
+    this.platform.log.info(`Current mode: ${this.device.status.operationMode}`);
+
     switch (this.device.status.operationMode) {
       case DeviceStatus.OPERATION_MODES.auto:
         return this.platform.Characteristic.CurrentHeatingCoolingState.OFF; // TODO
