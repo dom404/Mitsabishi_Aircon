@@ -130,7 +130,11 @@ export class WFRACAccessory {
         currentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING;
         targetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER;
 
-        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL; // Depending on the temperature, the device will be blowing or not.
+        if (this.device.status.presetTemp! < this.device.status.indoorTemp!) {
+          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
+        } else {
+          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        }
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
 
         currentFanActive = this.platform.Characteristic.Active.INACTIVE;
@@ -186,6 +190,8 @@ export class WFRACAccessory {
         this.device.setAirflow(0);
         break;
     }
+
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
   }
 
   setTargetTemperature(value: CharacteristicValue) {
@@ -195,6 +201,8 @@ export class WFRACAccessory {
 
     this.platform.log.info('Setting target temperature to', value);
     this.device.setPresetTemp(value as number);
+
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
   }
 
   setFanActive(value: CharacteristicValue) {
@@ -221,6 +229,8 @@ export class WFRACAccessory {
         }
         break;
     }
+
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
   }
 
   setTargetFanState(value: CharacteristicValue) {
@@ -238,6 +248,8 @@ export class WFRACAccessory {
         // TODO
         break;
     }
+
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
   }
 
   setRotationSpeed(value: CharacteristicValue) {
@@ -252,6 +264,8 @@ export class WFRACAccessory {
       this.device.setOperationMode(3);
     }
     this.device.setAirflow(Math.round(value as number / 25));
+
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
   }
 
   setHumidifierActive(value: CharacteristicValue) {
@@ -272,6 +286,8 @@ export class WFRACAccessory {
         this.device.setOperationMode(4);
         break;
     }
+
+    this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
   }
 }
 
