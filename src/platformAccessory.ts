@@ -212,7 +212,7 @@ export class WFRACAccessory {
       this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.device.status.presetTemp);
     }
 
-    if (this.device.status.operationMode !== null) {
+    if (this.device.status.operationMode !== null && this.device.status.operationMode !== undefined) {
       let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
       let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
 
