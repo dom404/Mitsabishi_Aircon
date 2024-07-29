@@ -56,7 +56,6 @@ export class HomebridgeMHIWFRACPlatform implements DynamicPlatformPlugin {
    * must not be registered again to prevent "duplicate UUID" errors.
    */
   discoverDevices() {
-    this.log('Discovering devices...');
     const bonjourService = bonjour();
 
     // Start looking for devices advertising _beaver._tcp service

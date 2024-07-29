@@ -25,6 +25,7 @@ export class WFRACAccessory {
     this.ipAddress = ip;
     this.operatorId = 'E0F96719-367D-4D03-8A2C-D8F935486AFD'; // this.platform.api.hap.uuid.generate('HomebridgeMHIWFRAC').toString().toUpperCase()";
     // TODO: we should create a new operatorId for the platform and register it to the device.
+
     this.device = new DeviceClient(this.ipAddress, this.port, this.operatorId, this.deviceName, this.platform.log);
 
     // set accessory information
@@ -50,8 +51,6 @@ export class WFRACAccessory {
       .setProps({validValues: [this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER]});
     this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState)
       .setProps({validValues: [this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE, this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING]});
-
-    // We should implement current relative humidity to be compliant with the specs, but we do not know any value.
 
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState)
       .onSet(this.setTargetHeatingCoolingState.bind(this));
@@ -164,29 +163,33 @@ export class WFRACAccessory {
 
     switch (value) {
       case this.platform.Characteristic.TargetHeatingCoolingState.OFF:
-        this.platform.log.info('Setting OFF');
+        this.platform.log.info(`Turning ${this.deviceName} off`);
         this.device.setOperation(false);
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.HEAT:
-        this.platform.log.info('Setting HEAT');
+        this.platform.log.info(`Setting ${this.deviceName} to heating mode`);
         this.device.setOperationMode(2);
         if (!this.device.status.operation) {
+          this.platform.log.info(`Turning ${this.deviceName} on`);
           this.device.setOperation(true);
         }
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.COOL:
-        this.platform.log.info('Setting COOL');
+        this.platform.log.info(`Setting ${this.deviceName} to cooling mode`);
         this.device.setOperationMode(1);
         if (!this.device.status.operation) {
+          this.platform.log.info(`Turning ${this.deviceName} on`);
           this.device.setOperation(true);
         }
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.AUTO:
-        this.platform.log.info('Setting AUTO');
+        this.platform.log.info(`Setting ${this.deviceName} to auto cooling/heating mode`);
         this.device.setOperationMode(0);
         if (!this.device.status.operation) {
+          this.platform.log.info(`Turning ${this.deviceName} on`);
           this.device.setOperation(true);
         }
+        this.platform.log.info(`Setting ${this.deviceName} fan speed to auto`);
         this.device.setAirflow(0);
         break;
     }
@@ -199,7 +202,7 @@ export class WFRACAccessory {
       clearTimeout(this.refreshTimeout);
     }
 
-    this.platform.log.info('Setting target temperature to', value);
+    this.platform.log.info(`Setting ${this.deviceName} temperature to`, value);
     this.device.setPresetTemp(value as number);
 
     this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
@@ -212,19 +215,21 @@ export class WFRACAccessory {
 
     switch (value) {
       case this.platform.Characteristic.Active.INACTIVE:
-        this.platform.log.info('Setting fan inactive');
         if (this.device.status.operationMode === 3) {
+          this.platform.log.info(`Turning ${this.deviceName} off after setting fan inactive`);
           this.device.setOperation(false);
         } else {
+          this.platform.log.info(`Setting ${this.deviceName} fan speed to AUTO`);
           this.device.setAirflow(0);
         }
         break;
       case this.platform.Characteristic.Active.ACTIVE:
-        this.platform.log.info('Setting fan active');
         if (!this.device.status.operation) {
+          this.platform.log.info(`Turning ${this.deviceName} on and setting operation mode to fan mode`);
           this.device.setOperationMode(3);
           this.device.setOperation(true);
         } else {
+          this.platform.log.info(`Setting ${this.deviceName} fan speed to AUTO`);
           this.device.setAirflow(0);
         }
         break;
@@ -240,11 +245,10 @@ export class WFRACAccessory {
 
     switch (value) {
       case this.platform.Characteristic.TargetFanState.AUTO:
-        this.platform.log.info('Setting AUTO');
+        this.platform.log.info(`Setting ${this.deviceName} fan speed to AUTO`);
         this.device.setAirflow(0);
         break;
       case this.platform.Characteristic.TargetFanState.MANUAL:
-        this.platform.log.info('Setting MANUAL');
         // TODO ??? Maybe just noop
         break;
     }
@@ -257,13 +261,18 @@ export class WFRACAccessory {
       clearTimeout(this.refreshTimeout);
     }
 
-    this.platform.log.info('Setting fan speed to', value);
-
+    if (value === 0) {
+      this.platform.log(`Setting fan speed for ${this.deviceName} to auto`);
+      this.device.setAirflow(0);
+    } else {
+      this.platform.log(`Setting fan speed for ${this.deviceName} to`, value);
+      this.device.setAirflow(Math.round(value as number / 25));
+    }
     if (!this.device.status.operation) {
+      this.platform.log(`Turning ${this.deviceName} on and setting operation mode to fan mode`);
       this.device.setOperationMode(3);
       this.device.setOperation(true);
     }
-    this.device.setAirflow(Math.round(value as number / 25));
 
     this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
   }
@@ -273,15 +282,16 @@ export class WFRACAccessory {
       clearTimeout(this.refreshTimeout);
     }
 
-    this.platform.log.info('Setting dehumidifier active to', value);
-
     switch (value) {
       case this.platform.Characteristic.Active.INACTIVE:
+        this.platform.log(`Setting ${this.deviceName} dehumidifier inactive`);
         this.device.setOperationMode(0);
         break;
       case this.platform.Characteristic.Active.ACTIVE:
+        this.platform.log(`Setting ${this.deviceName} dehumidifier active`);
         this.device.setOperationMode(4);
         if (!this.device.status.operation) {
+          this.platform.log(`Turning ${this.deviceName} on`);
           this.device.setOperation(true);
         }
         break;
