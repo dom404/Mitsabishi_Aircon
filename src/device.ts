@@ -489,36 +489,32 @@ export class DeviceClient {
     return this.status;
   }
 
-  async setAirflow(airFlow: number): Promise<DeviceStatus> {
+  setAirflow(airFlow: number): DeviceStatus {
     this.log(`Setting airflow to ${airFlow}`);
     this.status.airFlow = airFlow;
-    return this.setDeviceStatus(this.status);
-  }
-
-  async setOperationMode(operationMode: number): Promise<DeviceStatus> {
-    this.log(`Setting operation mode to ${operationMode}`);
-    this.status.operationMode = operationMode;
-    return this.setDeviceStatus(this.status);
-  }
-
-  async setOperation(operation: boolean): Promise<DeviceStatus> {
-    this.log(`Setting operation to ${operation}`);
-    this.status.operation = operation;
-
-    // There should be a timeout after turning on the device before setting the status, so we use a different method
-    const contents = {
-      airconId: this.deviceId,
-      airconStat: this.status.toBase64(),
-    };
-    await this.call('setAirconStat', contents);
-    // setTimeout(() => this.getDeviceStatus(), 3000);
+    this.setDeviceStatus(this.status);
     return this.status;
   }
 
-  async setPresetTemp(presetTemp: number): Promise<DeviceStatus> {
+  setOperationMode(operationMode: number): DeviceStatus {
+    this.log(`Setting operation mode to ${operationMode}`);
+    this.status.operationMode = operationMode;
+    this.setDeviceStatus(this.status);
+    return this.status;
+  }
+
+  setOperation(operation: boolean): DeviceStatus {
+    this.log(`Setting operation to ${operation}`);
+    this.status.operation = operation;
+    this.setDeviceStatus(this.status);
+    return this.status;
+  }
+
+  setPresetTemp(presetTemp: number): DeviceStatus {
     this.log(`Setting preset temperature to ${presetTemp}`);
     this.status.presetTemp = presetTemp;
-    return this.setDeviceStatus(this.status);
+    this.setDeviceStatus(this.status);
+    return this.status;
   }
 
   async setDeviceStatus(status: DeviceStatus): Promise<DeviceStatus> {

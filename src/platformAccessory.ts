@@ -158,6 +158,10 @@ export class WFRACAccessory {
   }
 
   setTargetHeatingCoolingState(value: CharacteristicValue) {
+    if (this.refreshTimeout) {
+      clearTimeout(this.refreshTimeout);
+    }
+
     switch (value) {
       case this.platform.Characteristic.TargetHeatingCoolingState.OFF:
         this.platform.log.info('Setting OFF');
@@ -189,11 +193,19 @@ export class WFRACAccessory {
   }
 
   setTargetTemperature(value: CharacteristicValue) {
+    if (this.refreshTimeout) {
+      clearTimeout(this.refreshTimeout);
+    }
+
     this.platform.log.info('Setting target temperature to', value);
     this.device.setPresetTemp(value as number);
   }
 
   setFanActive(value: CharacteristicValue) {
+    if (this.refreshTimeout) {
+      clearTimeout(this.refreshTimeout);
+    }
+
     switch (value) {
       case this.platform.Characteristic.Active.INACTIVE:
         this.platform.log.info('Setting fan inactive');
@@ -216,6 +228,10 @@ export class WFRACAccessory {
   }
 
   setTargetFanState(value: CharacteristicValue) {
+    if (this.refreshTimeout) {
+      clearTimeout(this.refreshTimeout);
+    }
+
     switch (value) {
       case this.platform.Characteristic.TargetFanState.AUTO:
         this.platform.log.info('Setting AUTO');
@@ -229,11 +245,19 @@ export class WFRACAccessory {
   }
 
   setRotationSpeed(value: CharacteristicValue) {
+    if (this.refreshTimeout) {
+      clearTimeout(this.refreshTimeout);
+    }
+
     this.platform.log.info('Setting fan speed to', value);
     this.device.setAirflow(Math.round(value as number / 25));
   }
 
   setHumidifierActive(value: CharacteristicValue) {
+    if (this.refreshTimeout) {
+      clearTimeout(this.refreshTimeout);
+    }
+
     this.platform.log.info('Setting dehumidifier active to', value);
     if (!this.device.status.operation) {
       this.device.setOperation(true);
