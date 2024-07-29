@@ -169,24 +169,24 @@ export class WFRACAccessory {
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.HEAT:
         this.platform.log.info('Setting HEAT');
+        this.device.setOperationMode(2);
         if (!this.device.status.operation) {
           this.device.setOperation(true);
         }
-        this.device.setOperationMode(2);
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.COOL:
         this.platform.log.info('Setting COOL');
+        this.device.setOperationMode(1);
         if (!this.device.status.operation) {
           this.device.setOperation(true);
         }
-        this.device.setOperationMode(1);
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.AUTO:
         this.platform.log.info('Setting AUTO');
+        this.device.setOperationMode(0);
         if (!this.device.status.operation) {
           this.device.setOperation(true);
         }
-        this.device.setOperationMode(0);
         this.device.setAirflow(0);
         break;
     }
@@ -222,8 +222,8 @@ export class WFRACAccessory {
       case this.platform.Characteristic.Active.ACTIVE:
         this.platform.log.info('Setting fan active');
         if (!this.device.status.operation) {
-          this.device.setOperation(true);
           this.device.setOperationMode(3);
+          this.device.setOperation(true);
         } else {
           this.device.setAirflow(0);
         }
@@ -245,7 +245,7 @@ export class WFRACAccessory {
         break;
       case this.platform.Characteristic.TargetFanState.MANUAL:
         this.platform.log.info('Setting MANUAL');
-        // TODO
+        // TODO ??? Maybe just noop
         break;
     }
 
@@ -260,8 +260,8 @@ export class WFRACAccessory {
     this.platform.log.info('Setting fan speed to', value);
 
     if (!this.device.status.operation) {
-      this.device.setOperation(true);
       this.device.setOperationMode(3);
+      this.device.setOperation(true);
     }
     this.device.setAirflow(Math.round(value as number / 25));
 
@@ -280,10 +280,10 @@ export class WFRACAccessory {
         this.device.setOperationMode(0);
         break;
       case this.platform.Characteristic.Active.ACTIVE:
+        this.device.setOperationMode(4);
         if (!this.device.status.operation) {
           this.device.setOperation(true);
         }
-        this.device.setOperationMode(4);
         break;
     }
 

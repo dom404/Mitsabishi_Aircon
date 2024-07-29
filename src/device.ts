@@ -490,28 +490,24 @@ export class DeviceClient {
   }
 
   setAirflow(airFlow: number): DeviceStatus {
-    this.log(`Setting airflow to ${airFlow}`);
     this.status.airFlow = airFlow;
     this.setDeviceStatus(this.status);
     return this.status;
   }
 
   setOperationMode(operationMode: number): DeviceStatus {
-    this.log(`Setting operation mode to ${operationMode}`);
     this.status.operationMode = operationMode;
     this.setDeviceStatus(this.status);
     return this.status;
   }
 
   setOperation(operation: boolean): DeviceStatus {
-    this.log(`Setting operation to ${operation}`);
     this.status.operation = operation;
     this.setDeviceStatus(this.status);
     return this.status;
   }
 
   setPresetTemp(presetTemp: number): DeviceStatus {
-    this.log(`Setting preset temperature to ${presetTemp}`);
     this.status.presetTemp = presetTemp;
     this.setDeviceStatus(this.status);
     return this.status;
