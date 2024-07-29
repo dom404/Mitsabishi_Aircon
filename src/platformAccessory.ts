@@ -84,13 +84,20 @@ export class WFRACAccessory {
 
     let currentFanActive = this.platform.Characteristic.Active.INACTIVE;
     let currentFanState = this.platform.Characteristic.CurrentFanState.INACTIVE;
+    let fanSpeed = 0;
     let targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
+
 
     let currentDehumidifierActive = this.platform.Characteristic.Active.INACTIVE;
     let currentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE;
     let targetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER;
 
     if (this.device.status.operation) {
+      currentFanActive = this.platform.Characteristic.Active.ACTIVE;
+      currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
+      fanSpeed = this.device.status.airFlow * 25;
+      targetFanState = (this.device.status.airFlow === 0) ? this.platform.Characteristic.TargetFanState.AUTO : this.platform.Characteristic.TargetFanState.MANUAL;
+
       if (this.device.status.operationMode === 0 || this.device.status.operationMode === -1) {
         this.platform.log.info('Auto');
 
@@ -99,22 +106,15 @@ export class WFRACAccessory {
         if (this.device.status.coolHotJudge) {
           currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
 
-          currentFanActive = this.platform.Characteristic.Active.INACTIVE;
-          currentFanState = this.platform.Characteristic.CurrentFanState.IDLE;
         } else {
           currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-
-          currentFanActive = this.platform.Characteristic.Active.ACTIVE;
-          currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
         }
+
       } else if (this.device.status.operationMode === 1) {
         this.platform.log.info('Cooling');
 
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-
-        currentFanActive = this.platform.Characteristic.Active.ACTIVE;
-        currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
 
       } else if (this.device.status.operationMode === 2) {
         this.platform.log.info('Heating');
@@ -122,16 +122,12 @@ export class WFRACAccessory {
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
 
-        currentFanActive = this.platform.Characteristic.Active.INACTIVE;
-        currentFanState = this.platform.Characteristic.CurrentFanState.INACTIVE;
+
       } else if (this.device.status.operationMode === 3) {
         this.platform.log.info('Fan');
 
-        currentFanActive = this.platform.Characteristic.Active.ACTIVE;
-        currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
-
-        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
       } else if (this.device.status.operationMode === 4) {
         this.platform.log.info('Drying');
 
@@ -141,16 +137,16 @@ export class WFRACAccessory {
 
         if (this.device.status.presetTemp! < this.device.status.indoorTemp!) {
           currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-
-          currentFanActive = this.platform.Characteristic.Active.ACTIVE;
-          currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
         } else {
           currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-
-          currentFanActive = this.platform.Characteristic.Active.INACTIVE;
-          currentFanState = this.platform.Characteristic.CurrentFanState.IDLE;
         }
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
+
+        currentFanActive = this.platform.Characteristic.Active.INACTIVE;
+        currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
+        fanSpeed = 0;
+        targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
+
       }
     }
 
@@ -159,14 +155,6 @@ export class WFRACAccessory {
 
     this.fanService.updateCharacteristic(this.platform.Characteristic.Active, currentFanActive);
     this.fanService.updateCharacteristic(this.platform.Characteristic.CurrentFanState, currentFanState);
-
-    const fanSpeed = this.device.status.airFlow * 25;
-    if (this.device.status.airFlow === 0 || this.device.status.operationMode === 4) {
-      targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
-    } else {
-      targetFanState = this.platform.Characteristic.TargetFanState.MANUAL;
-    }
-
     this.fanService.updateCharacteristic(this.platform.Characteristic.RotationSpeed, fanSpeed);
     this.fanService.updateCharacteristic(this.platform.Characteristic.TargetFanState, targetFanState);
 
