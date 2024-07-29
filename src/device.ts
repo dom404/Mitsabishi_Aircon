@@ -429,6 +429,11 @@ export class DeviceStatus {
   }
 }
 
+interface DeviceStatusRequest {
+  airconId: string;
+  airconStat: string;
+}
+
 interface DeviceStatusResponse {
   command: string;
   apiVer: string;
@@ -515,12 +520,12 @@ export class DeviceClient {
       airconId: this.deviceId,
       airconStat: status.toBase64(),
     };
-    await this.call('setAirconStat', JSON.stringify(contents))
+    await this.call('setAirconStat', contents)
       .then(data => this.status = DeviceStatus.fromBase64(data.contents.airconStat));
     return this.status;
   }
 
-  async call(command: string, contents: string|null = null): Promise<DeviceStatusResponse> {
+  async call(command: string, contents: DeviceStatusRequest|null = null): Promise<DeviceStatusResponse> {
     let data;
     if (contents) {
       data = {
@@ -529,7 +534,7 @@ export class DeviceClient {
         deviceId: this.deviceId,
         operatorId: this.operatorId,
         timestamp: Math.floor(new Date().valueOf() / 1000),
-        contents,
+        contents: contents
       };
     } else {
       data = {
