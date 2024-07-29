@@ -240,15 +240,15 @@ export class DeviceStatus {
     }
 
     // Operating mode
-    if (this.operationMode === 0) {
+    if (this.operationMode === DeviceStatus.OPERATION_MODE_AUTO) {
       statByte[2] |= 32;
-    } else if (this.operationMode === 1) {
+    } else if (this.operationMode === DeviceStatus.OPERATION_MODE_COOL) {
       statByte[2] |= 40;
-    } else if (this.operationMode === 2) {
+    } else if (this.operationMode === DeviceStatus.OPERATION_MODE_HEAT) {
       statByte[2] |= 48;
-    } else if (this.operationMode === 3) {
+    } else if (this.operationMode === DeviceStatus.OPERATION_MODE_FAN) {
       statByte[2] |= 44;
-    } else if (this.operationMode === 4) {
+    } else if (this.operationMode === DeviceStatus.OPERATION_MODE_DRY) {
       statByte[2] |= 36;
     }
 
@@ -312,7 +312,7 @@ export class DeviceStatus {
 
     // Preset temperature
     let presetTemp = 25.0;
-    if (this.operationMode !== 3 && this.presetTemp !== null) {
+    if (this.operationMode !== DeviceStatus.OPERATION_MODE_FAN && this.presetTemp !== null) {
       presetTemp = this.presetTemp;
     }
 
@@ -342,13 +342,13 @@ export class DeviceStatus {
     }
 
     // Operating mode
-    if (status.operationMode === 1) {
+    if (status.operationMode === DeviceStatus.OPERATION_MODE_COOL) {
       statByte[2] |= 8;
-    } else if (status.operationMode === 2) {
+    } else if (status.operationMode === DeviceStatus.OPERATION_MODE_HEAT) {
       statByte[2] |= 16;
-    } else if (status.operationMode === 3) {
+    } else if (status.operationMode === DeviceStatus.OPERATION_MODE_FAN) {
       statByte[2] |= 12;
-    } else if (status.operationMode === 4) {
+    } else if (status.operationMode === DeviceStatus.OPERATION_MODE_DRY) {
       statByte[2] |= 4;
     }
 
@@ -395,7 +395,7 @@ export class DeviceStatus {
 
     // Preset temperature
     let presetTemp = 25.0;
-    if (status.operationMode !== 3 && status.presetTemp !== null) {
+    if (status.operationMode !== DeviceStatus.OPERATION_MODE_FAN && status.presetTemp !== null) {
       presetTemp = status.presetTemp;
     }
 
