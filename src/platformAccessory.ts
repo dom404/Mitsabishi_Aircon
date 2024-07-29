@@ -48,22 +48,9 @@ export class WFRACAccessory {
     this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState)
       .setProps({validValues: [this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE, this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING]});
 
-    // TODO: we should implement current relative humidity to be compliant with the specs, but we do not know any value. Perhaps hardcoding 50%?
+    // We should implement current relative humidity to be compliant with the specs, but we do not know any value.
 
     this.refreshStatus();
-
-    // this.dehumidifierService.getCharacteristic(this.platform.Characteristic.Active)
-    //   .onGet(this.getDehumidifierActive.bind(this))
-    //   .onSet(this.setDehumidifierActive.bind(this));
-    //
-    // this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity)
-    //   .onGet(() => 50);
-    // this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState)
-    //   .onGet(this.getCurrentHumidifierDehumidifierState.bind(this));
-    // this.dehumidifierService.getCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState)
-    //   .onGet(this.getTargetHumidifierDehumidifierState.bind(this))
-    //   .onSet(this.setTargetHumidifierDehumidifierState.bind(this));
-
 
   }
 
@@ -124,8 +111,12 @@ export class WFRACAccessory {
         currentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING;
         targetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER;
 
-        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO; // TODO or should this be OFF?
+        if (this.device.status.presetTemp! < this.device.status.indoorTemp!) {
+          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
+        } else {
+          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        }
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
       }
     }
 
@@ -137,3 +128,4 @@ export class WFRACAccessory {
     this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState, targetHumidifierDehumidifierState);
   }
 }
+
