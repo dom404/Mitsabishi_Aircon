@@ -221,31 +221,32 @@ export class WFRACAccessory {
     let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
     let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
 
-    this.platform.log.info(`Current mode: ${this.device.status.operationMode}`);
-    if (this.device.status.operation && this.device.status.operationMode?.valueOf() === DeviceStatus.OPERATION_MODE_COOL) {
-      this.platform.log.info('Cooling');
-      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
-      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-    } else if (this.device.status.operation && this.device.status.operationMode?.valueOf() === DeviceStatus.OPERATION_MODE_HEAT) {
-      this.platform.log.info('Heating');
-      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
-      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
-    } else if (this.device.status.operation && this.device.status.operationMode?.valueOf() === DeviceStatus.OPERATION_MODE_AUTO) {
-      this.platform.log.info('Auto');
-      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
-      if (this.device.status.isAutoHeating) {
-        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
-      } else {
+    if (this.device.status.operation) {
+      if (this.device.status.operationMode === 0) {
+        this.platform.log.info('Auto');
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
+        if (this.device.status.isAutoHeating) {
+          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
+        } else {
+          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
+        }
+      } else if (this.device.status.operationMode === 1) {
+        this.platform.log.info('Cooling');
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
+      } else if (this.device.status.operationMode === 2) {
+        this.platform.log.info('Heating');
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
+      } else if (this.device.status.operationMode === 3) {
+        // TODO
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+      } else if (this.device.status.operationMode === 4) {
+        // TODO
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
       }
-    } else if (this.device.status.operation && this.device.status.operationMode === 3) {
-      // TODO
-      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
-    } else if (this.device.status.operation && this.device.status.operationMode === 4) {
-      // TODO
-      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
     }
 
     this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, currentHeatingCoolingState);
