@@ -5,11 +5,11 @@
   "schema": {
     "type": "object",
     "properties": {
-      "name": {
-        "title": "Operator ID",
+      "operatorId": {
+        "title": "Operator ID (uuid)",
         "type": "string",
         "required": true,
-        "default": "????"
+        "default": "fbfc7e2c-aee6-461b-8f97-532845592145"
       }
     }
   }
