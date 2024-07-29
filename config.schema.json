@@ -9,7 +9,8 @@
         "title": "Operator ID (uuid)",
         "type": "string",
         "required": true,
-        "default": "fbfc7e2c-aee6-461b-8f97-532845592145"
+        "default": "fbfc7e2c-aee6-461b-8f97-532845592145",
+        "description": "The operator ID of the Smart M-Air app. See https://github.com/JobDoesburg/homebridge-mhi-wfrac for more information."
       }
     }
   }
