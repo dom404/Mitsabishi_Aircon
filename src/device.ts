@@ -306,7 +306,7 @@ export class DeviceStatus {
 
     // Preset temperature
     let presetTemp = 25.0;
-    if (this.operationMode !== 3) {
+    if (this.operationMode !== 3 && this.presetTemp !== null) {
       presetTemp = this.presetTemp;
     }
 
@@ -389,7 +389,7 @@ export class DeviceStatus {
 
     // Preset temperature
     let presetTemp = 25.0;
-    if (status.operationMode !== 3) {
+    if (status.operationMode !== 3 && status.presetTemp !== null) {
       presetTemp = status.presetTemp;
     }
 

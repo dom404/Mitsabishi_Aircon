@@ -212,30 +212,33 @@ export class WFRACAccessory {
       this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.device.status.presetTemp);
     }
 
-    let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-    let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
-    if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.cool) {
-      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
-    } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.heat) {
-      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
-      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
-    } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.auto) {
-      // TODO
-      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
-    } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.fan) {
-      // TODO
-      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
-    } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.dry) {
-      // TODO
-      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
-    }
+    if (this.device.status.operationMode !== null) {
+      let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+      let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
 
-    this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, currentHeatingCoolingState);
-    this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, targetHeatingCoolingState);
+      if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.cool) {
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
+      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.heat) {
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
+      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.auto) {
+        // TODO
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
+      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.fan) {
+        // TODO
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.dry) {
+        // TODO
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+      }
+
+      this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, currentHeatingCoolingState);
+      this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, targetHeatingCoolingState);
+    }
 
     this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
 
