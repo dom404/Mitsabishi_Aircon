@@ -498,14 +498,21 @@ export class DeviceClient {
   async setOperationMode(operationMode: number): Promise<DeviceStatus> {
     this.log(`Setting operation mode to ${operationMode}`);
     this.status.operationMode = operationMode;
-    this.status.operation = true;
     return this.setDeviceStatus(this.status);
   }
 
   async setOperation(operation: boolean): Promise<DeviceStatus> {
     this.log(`Setting operation to ${operation}`);
     this.status.operation = operation;
-    return this.setDeviceStatus(this.status);
+
+    // There should be a timeout after turning on the device before setting the status, so we use a different method
+    const contents = {
+      airconId: this.deviceId,
+      airconStat: this.status.toBase64(),
+    };
+    await this.call('setAirconStat', contents);
+    // setTimeout(() => this.getDeviceStatus(), 3000);
+    return this.status;
   }
 
   async setPresetTemp(presetTemp: number): Promise<DeviceStatus> {
@@ -535,7 +542,7 @@ export class DeviceClient {
         deviceId: this.deviceId,
         operatorId: this.operatorId,
         timestamp: Math.floor(new Date().valueOf() / 1000),
-        contents: contents
+        contents: contents,
       };
     } else {
       data = {
@@ -548,7 +555,7 @@ export class DeviceClient {
     }
     const body = JSON.stringify(data);
 
-    this.log(`Method: POST, URL: http://${this.ipAddress}:${this.port}/beaver/command, Body: ${body}`)
+    this.log(`Method: POST, URL: http://${this.ipAddress}:${this.port}/beaver/command, Body: ${body}`);
 
     // We must use axios, because fetch lowercases the headers, which the device does not like
     return await axios.post(`http://${this.ipAddress}:${this.port}/beaver/command`, body)
