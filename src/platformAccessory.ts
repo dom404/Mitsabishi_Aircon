@@ -37,10 +37,13 @@ export class WFRACAccessory {
       .setCharacteristic(this.platform.Characteristic.Model, 'WF-RAC Smart M-Air Series')
       .setCharacteristic(this.platform.Characteristic.SerialNumber, this.deviceName);
 
-    this.thermostatService = this.accessory.getService(this.platform.Service.Thermostat) || this.accessory.addService(this.platform.Service.Thermostat);
-    this.fanService = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
+    this.thermostatService = this.accessory.getService(this.platform.Service.Thermostat)
+      || this.accessory.addService(this.platform.Service.Thermostat);
+    this.fanService = this.accessory.getService(this.platform.Service.Fanv2)
+      || this.accessory.addService(this.platform.Service.Fanv2);
     // TODO maybe this should be AirPurifier so we have an extra button for the fan (to switch to manual mode)
-    this.dehumidifierService = this.accessory.getService(this.platform.Service.HumidifierDehumidifier) || this.accessory.addService(this.platform.Service.HumidifierDehumidifier);
+    this.dehumidifierService = this.accessory.getService(this.platform.Service.HumidifierDehumidifier)
+      || this.accessory.addService(this.platform.Service.HumidifierDehumidifier);
 
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TemperatureDisplayUnits)
       .onGet(() => this.platform.Characteristic.TemperatureDisplayUnits.CELSIUS);
@@ -54,7 +57,10 @@ export class WFRACAccessory {
     this.dehumidifierService.getCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState)
       .setProps({validValues: [this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER]});
     this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState)
-      .setProps({validValues: [this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE, this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING]});
+      .setProps({validValues: [
+        this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE,
+        this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING,
+      ]});
 
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState)
       .onSet(this.setTargetHeatingCoolingState.bind(this));
@@ -110,8 +116,10 @@ export class WFRACAccessory {
     if (this.device.status.operation) {
       currentFanActive = this.platform.Characteristic.Active.ACTIVE;
       fanSpeed = this.device.status.airFlow * 25;
-      currentFanState = (this.device.status.airFlow === 0) ? this.platform.Characteristic.CurrentFanState.IDLE : this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
-      targetFanState = (this.device.status.airFlow === 0) ? this.platform.Characteristic.TargetFanState.AUTO : this.platform.Characteristic.TargetFanState.MANUAL;
+      currentFanState = (this.device.status.airFlow === 0) ?
+        this.platform.Characteristic.CurrentFanState.IDLE : this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
+      targetFanState = (this.device.status.airFlow === 0) ?
+        this.platform.Characteristic.TargetFanState.AUTO : this.platform.Characteristic.TargetFanState.MANUAL;
       if (this.device.status.operationMode === 0 || this.device.status.operationMode === -1) {
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
         if (this.device.status.coolHotJudge) {
@@ -156,8 +164,12 @@ export class WFRACAccessory {
     this.fanService.updateCharacteristic(this.platform.Characteristic.TargetFanState, targetFanState);
 
     this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.Active, currentDehumidifierActive);
-    this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState, currentHumidifierDehumidifierState);
-    this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState, targetHumidifierDehumidifierState);
+    this.dehumidifierService.updateCharacteristic(
+      this.platform.Characteristic.CurrentHumidifierDehumidifierState, currentHumidifierDehumidifierState,
+    );
+    this.dehumidifierService.updateCharacteristic(
+      this.platform.Characteristic.TargetHumidifierDehumidifierState, targetHumidifierDehumidifierState,
+    );
   }
 
   setTargetHeatingCoolingState(value: CharacteristicValue) {
