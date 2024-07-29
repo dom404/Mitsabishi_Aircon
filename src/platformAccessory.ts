@@ -12,7 +12,7 @@ export class WFRACAccessory {
   private device: DeviceClient;
 
   private thermostatService: Service;
-  // private fanService: Service;
+  private fanService: Service;
   private dehumidifierService: Service;
   private refreshTimeout: NodeJS.Timeout | null = null;
 
@@ -33,7 +33,7 @@ export class WFRACAccessory {
       .setCharacteristic(this.platform.Characteristic.SerialNumber, this.deviceName);
 
     this.thermostatService = this.accessory.getService(this.platform.Service.Thermostat) || this.accessory.addService(this.platform.Service.Thermostat);
-    // this.fanService = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
+    this.fanService = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
     this.dehumidifierService = this.accessory.getService(this.platform.Service.HumidifierDehumidifier) || this.accessory.addService(this.platform.Service.HumidifierDehumidifier);
 
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TemperatureDisplayUnits)
@@ -73,12 +73,16 @@ export class WFRACAccessory {
     if (this.device.status.indoorTemp) {
       this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.device.status.indoorTemp);
     }
-    if (this.device.status.presetTemp) {
+    if (this.device.status.presetTemp && this.device.status.operationMode !== 3) {
       this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.device.status.presetTemp);
     }
 
     let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
     let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+
+    let currentFanActive = this.platform.Characteristic.Active.INACTIVE;
+    let currentFanState = this.platform.Characteristic.CurrentFanState.INACTIVE;
+    let targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
 
     let currentDehumidifierActive = this.platform.Characteristic.Active.INACTIVE;
     let currentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE;
@@ -90,19 +94,34 @@ export class WFRACAccessory {
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
         if (this.device.status.coolHotJudge) {
           currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
+          currentFanActive = this.platform.Characteristic.Active.INACTIVE;
+          currentFanState = this.platform.Characteristic.CurrentFanState.IDLE;
         } else {
           currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
+          currentFanActive = this.platform.Characteristic.Active.ACTIVE;
+          currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
         }
+        targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
       } else if (this.device.status.operationMode === 1) {
         this.platform.log.info('Cooling');
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
+        currentFanActive = this.platform.Characteristic.Active.ACTIVE;
+        currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
+        targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
       } else if (this.device.status.operationMode === 2) {
         this.platform.log.info('Heating');
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
+        currentFanActive = this.platform.Characteristic.Active.INACTIVE;
+        currentFanState = this.platform.Characteristic.CurrentFanState.INACTIVE;
+        targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
       } else if (this.device.status.operationMode === 3) {
-        // TODO
+        this.platform.log.info('Fan');
+        currentFanActive = this.platform.Characteristic.Active.ACTIVE;
+        currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
+        targetFanState = this.platform.Characteristic.TargetFanState.MANUAL;
+
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
       } else if (this.device.status.operationMode === 4) {
@@ -113,15 +132,25 @@ export class WFRACAccessory {
 
         if (this.device.status.presetTemp! < this.device.status.indoorTemp!) {
           currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
+          currentFanActive = this.platform.Characteristic.Active.ACTIVE;
+          currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
+          targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
         } else {
           currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+          currentFanActive = this.platform.Characteristic.Active.INACTIVE;
+          currentFanState = this.platform.Characteristic.CurrentFanState.IDLE;
         }
+        targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
       }
     }
 
     this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, currentHeatingCoolingState);
     this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, targetHeatingCoolingState);
+
+    this.fanService.updateCharacteristic(this.platform.Characteristic.Active, currentFanActive);
+    this.fanService.updateCharacteristic(this.platform.Characteristic.CurrentFanState, currentFanState);
+    this.fanService.updateCharacteristic(this.platform.Characteristic.TargetFanState, targetFanState);
 
     this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.Active, currentDehumidifierActive);
     this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState, currentHumidifierDehumidifierState);
