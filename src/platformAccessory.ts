@@ -94,8 +94,8 @@ export class WFRACAccessory {
 
     if (this.device.status.operation) {
       currentFanActive = this.platform.Characteristic.Active.ACTIVE;
-      currentFanState = this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
       fanSpeed = this.device.status.airFlow * 25;
+      currentFanState = (this.device.status.airFlow === 0) ? this.platform.Characteristic.CurrentFanState.IDLE : this.platform.Characteristic.CurrentFanState.BLOWING_AIR;
       targetFanState = (this.device.status.airFlow === 0) ? this.platform.Characteristic.TargetFanState.AUTO : this.platform.Characteristic.TargetFanState.MANUAL;
 
       if (this.device.status.operationMode === 0 || this.device.status.operationMode === -1) {
