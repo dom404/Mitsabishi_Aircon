@@ -221,9 +221,7 @@ export class WFRACAccessory {
     let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
     let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
 
-    this.platform.log(`Status for ${this.deviceName}: Operation: ${this.device.status.operation}, Operation Mode: ${this.device.status.operationMode}, Auto Heating: ${this.device.status.isAutoHeating}`);
-
-    if (this.device.status.operation && this.device.status.operationMode === 1) {
+    if (this.device.status.operation && this.device.status.operationMode === DeviceStatus.OPERATION_MODE_COOL) {
       this.platform.log.info('Cooling');
       targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
       currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;

@@ -31,14 +31,6 @@ export class DeviceStatus {
   static OPERATION_MODE_FAN: 3;
   static OPERATION_MODE_DRY: 4;
 
-  static OPERATION_MODES: {
-    AUTO: 0;
-    COOL: 1;
-    HEAT: 2;
-    FAN: 3;
-    DRY: 4;
-  };
-
   static VERTICAL_POSITIONS: {
         0: 'auto';
         1: 'highest';
@@ -119,7 +111,29 @@ export class DeviceStatus {
 
     deviceStatus.operation = (3 & data[2]) === 1;
     deviceStatus.presetTemp = data[4] / 2;
-    deviceStatus.operationMode = wosoFindMatch(60 & data[2], [8, 16, 12, 4], 1);
+
+    const opModeNumber = wosoFindMatch(60 & data[2], [8, 16, 12, 4], 1);
+    switch (opModeNumber) {
+      case 0:
+        deviceStatus.operationMode = DeviceStatus.OPERATION_MODE_AUTO;
+        break;
+      case 1:
+        deviceStatus.operationMode = DeviceStatus.OPERATION_MODE_COOL;
+        break;
+      case 2:
+        deviceStatus.operationMode = DeviceStatus.OPERATION_MODE_HEAT;
+        break;
+      case 3:
+        deviceStatus.operationMode = DeviceStatus.OPERATION_MODE_FAN;
+        break;
+      case 4:
+        deviceStatus.operationMode = DeviceStatus.OPERATION_MODE_DRY;
+        break;
+      default:
+        deviceStatus.operationMode = null;
+        break;
+    }
+
     deviceStatus.airFlow = wosoFindMatch(15 & data[3], [7, 0, 1, 2, 6]);
     deviceStatus.windDirectionUD = (data[2] & 192) === 64 ? 0 : wosoFindMatch(240 & data[3], [0, 16, 32, 48], 1);
     deviceStatus.windDirectionLR = (data[12] & 3) === 1 ? 0 : wosoFindMatch(31 & data[11], [0, 1, 2, 3, 4, 5, 6], 1);
