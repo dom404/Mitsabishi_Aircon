@@ -43,6 +43,11 @@ export class WFRACAccessory {
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
       .setProps({minValue: 18, maxValue: 30, minStep: 0.5});
 
+    this.dehumidifierService.getCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState)
+      .setProps({validValues: [this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER]});
+    this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState)
+      .setProps({validValues: [this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE, this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING]});
+
     // TODO: we should implement current relative humidity to be compliant with the specs, but we do not know any value. Perhaps hardcoding 50%?
 
     this.refreshStatus();
@@ -119,12 +124,8 @@ export class WFRACAccessory {
         currentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING;
         targetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER;
 
-        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
-        if (this.device.status.coolHotJudge) { // TODO check if this value is correct, otherwise we should set it to OFF
-          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
-        } else {
-          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-        }
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO; // TODO or should this be OFF?
       }
     }
 
