@@ -166,23 +166,14 @@ export class WFRACAccessory {
       case this.platform.Characteristic.TargetHeatingCoolingState.HEAT:
         this.platform.log.info('Setting HEAT');
         this.device.setOperationMode(2);
-        if (!this.device.status.operation) {
-          this.device.setOperation(true);
-        }
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.COOL:
         this.platform.log.info('Setting COOL');
         this.device.setOperationMode(1);
-        if (!this.device.status.operation) {
-          this.device.setOperation(true);
-        }
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.AUTO:
         this.platform.log.info('Setting AUTO');
         this.device.setOperationMode(0);
-        if (!this.device.status.operation) {
-          this.device.setOperation(true);
-        }
         break;
     }
   }

@@ -498,6 +498,7 @@ export class DeviceClient {
   async setOperationMode(operationMode: number): Promise<DeviceStatus> {
     this.log(`Setting operation mode to ${operationMode}`);
     this.status.operationMode = operationMode;
+    this.status.operation = true;
     return this.setDeviceStatus(this.status);
   }
 
