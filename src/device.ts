@@ -484,6 +484,30 @@ export class DeviceClient {
     return this.status;
   }
 
+  async setAirflow(airFlow: number): Promise<DeviceStatus> {
+    this.log(`Setting airflow to ${airFlow}`);
+    this.status.airFlow = airFlow;
+    return this.setDeviceStatus(this.status);
+  }
+
+  async setOperationMode(operationMode: number): Promise<DeviceStatus> {
+    this.log(`Setting operation mode to ${operationMode}`);
+    this.status.operationMode = operationMode;
+    return this.setDeviceStatus(this.status);
+  }
+
+  async setOperation(operation: boolean): Promise<DeviceStatus> {
+    this.log(`Setting operation to ${operation}`);
+    this.status.operation = operation;
+    return this.setDeviceStatus(this.status);
+  }
+
+  async setPresetTemp(presetTemp: number): Promise<DeviceStatus> {
+    this.log(`Setting preset temperature to ${presetTemp}`);
+    this.status.presetTemp = presetTemp;
+    return this.setDeviceStatus(this.status);
+  }
+
   async setDeviceStatus(status: DeviceStatus): Promise<DeviceStatus> {
     this.log(`Setting device status to ${JSON.stringify(status)}`);
     await this.call('setAirconStat', status.toBase64())

@@ -1,4 +1,4 @@
-import {Service, PlatformAccessory} from 'homebridge';
+import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
 import {DeviceClient, DeviceStatus} from './device.js';
 import {HomebridgeMHIWFRACPlatform} from './platform.js';
 
@@ -33,7 +33,7 @@ export class WFRACAccessory {
       .setCharacteristic(this.platform.Characteristic.SerialNumber, this.deviceName);
 
     this.thermostatService = this.accessory.getService(this.platform.Service.Thermostat) || this.accessory.addService(this.platform.Service.Thermostat);
-    this.fanService = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
+    this.fanService = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2); // TODO maybe this should be AirPurifier so we have an extra button for the fan (to switch to manual mode)
     this.dehumidifierService = this.accessory.getService(this.platform.Service.HumidifierDehumidifier) || this.accessory.addService(this.platform.Service.HumidifierDehumidifier);
 
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TemperatureDisplayUnits)
@@ -52,10 +52,24 @@ export class WFRACAccessory {
 
     // We should implement current relative humidity to be compliant with the specs, but we do not know any value.
 
+    this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState)
+      .onSet(this.setTargetHeatingCoolingState.bind(this));
+    this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
+      .onSet(this.setTargetTemperature.bind(this));
+    this.fanService.getCharacteristic(this.platform.Characteristic.Active)
+      .onSet(this.setFanActive.bind(this));
+    this.fanService.getCharacteristic(this.platform.Characteristic.TargetFanState)
+      .onSet(this.setTargetFanState.bind(this));
+    this.fanService.getCharacteristic(this.platform.Characteristic.RotationSpeed)
+      .onSet(this.setRotationSpeed.bind(this));
+    this.dehumidifierService.getCharacteristic(this.platform.Characteristic.Active)
+      .onSet(this.setHumidifierActive.bind(this));
+
+    // TODO we do not implement the target humidifier state, since we only accept DEHUMIDIFIER as a valid value.
+
     this.refreshStatus();
 
   }
-
 
   refreshStatus() {
     if (this.refreshTimeout) {
@@ -162,5 +176,92 @@ export class WFRACAccessory {
     this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState, currentHumidifierDehumidifierState);
     this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState, targetHumidifierDehumidifierState);
   }
+
+  setTargetHeatingCoolingState(value: CharacteristicValue) {
+    switch (value) {
+      case this.platform.Characteristic.TargetHeatingCoolingState.OFF:
+        this.platform.log.info('Setting OFF');
+        this.device.setOperation(false);
+        break;
+      case this.platform.Characteristic.TargetHeatingCoolingState.HEAT:
+        this.platform.log.info('Setting HEAT');
+        if (!this.device.status.operation) {
+          this.device.setOperation(true);
+        }
+        this.device.setOperationMode(2);
+        break;
+      case this.platform.Characteristic.TargetHeatingCoolingState.COOL:
+        this.platform.log.info('Setting COOL');
+        if (!this.device.status.operation) {
+          this.device.setOperation(true);
+        }
+        this.device.setOperationMode(1);
+        break;
+      case this.platform.Characteristic.TargetHeatingCoolingState.AUTO:
+        this.platform.log.info('Setting AUTO');
+        if (!this.device.status.operation) {
+          this.device.setOperation(true);
+        }
+        this.device.setOperationMode(0);
+        break;
+    }
+  }
+
+  setTargetTemperature(value: CharacteristicValue) {
+    this.platform.log.info('Setting target temperature to', value);
+    this.device.setPresetTemp(value as number);
+  }
+
+  setFanActive(value: CharacteristicValue) {
+    switch (value) {
+      case this.platform.Characteristic.Active.INACTIVE:
+        this.platform.log.info('Setting fan inactive');
+        if (this.device.status.operationMode === 3) {
+          this.device.setOperation(false);
+        } else {
+          this.device.setAirflow(0)
+        }
+        break;
+      case this.platform.Characteristic.Active.ACTIVE:
+        this.platform.log.info('Setting fan active');
+        if (!this.device.status.operation) {
+          this.device.setOperation(true);
+          this.device.setOperationMode(3);
+        } else {
+          this.device.setAirflow(0);
+        }
+        break;
+    }
+  }
+
+  setTargetFanState(value: CharacteristicValue) {
+    switch (value) {
+      case this.platform.Characteristic.TargetFanState.AUTO:
+        this.platform.log.info('Setting AUTO');
+        this.device.setAirflow(0);
+        break;
+      case this.platform.Characteristic.TargetFanState.MANUAL:
+        this.platform.log.info('Setting MANUAL');
+        // TODO
+        break;
+    }
+  }
+
+  setRotationSpeed(value: CharacteristicValue) {
+    this.platform.log.info('Setting fan speed to', value);
+    this.device.setAirflow(Math.round(value as number / 25));
+  }
+
+  setHumidifierActive(value: CharacteristicValue) {
+    this.platform.log.info('Setting dehumidifier active to', value);
+    if (!this.device.status.operation) {
+      this.device.setOperation(true);
+    }
+    this.device.setOperationMode(4);
+  }
+
+
+
+
 }
 
