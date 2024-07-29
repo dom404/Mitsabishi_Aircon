@@ -229,7 +229,7 @@ export class WFRACAccessory {
       this.platform.log.info('Heating');
       targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
       currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
-    } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODE_AUTO) {
+    } else if (this.device.status.operation && this.device.status.operationMode === DeviceStatus.OPERATION_MODE_AUTO) {
       this.platform.log.info('Auto');
       targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
       if (this.device.status.isAutoHeating) {
@@ -237,11 +237,11 @@ export class WFRACAccessory {
       } else {
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
       }
-    } else if (this.device.status.operationMode === 3) {
+    } else if (this.device.status.operation && this.device.status.operationMode === 3) {
       // TODO
       currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
       targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
-    } else if (this.device.status.operationMode === 4) {
+    } else if (this.device.status.operation && this.device.status.operationMode === 4) {
       // TODO
       currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
       targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
