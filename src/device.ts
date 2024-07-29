@@ -518,8 +518,6 @@ export class DeviceClient {
   }
 
   async setDeviceStatus(status: DeviceStatus): Promise<DeviceStatus> {
-    this.log(`Setting device status to ${JSON.stringify(status)} (${status.toBase64()})`);
-
     const contents = {
       airconId: this.deviceId,
       airconStat: status.toBase64(),
