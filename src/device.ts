@@ -25,6 +25,12 @@ export class DeviceStatus {
     7: 'right-left';
   };
 
+  static OPERATION_MODE_AUTO: 0;
+  static OPERATION_MODE_COOL: 1;
+  static OPERATION_MODE_HEAT: 2;
+  static OPERATION_MODE_FAN: 3;
+  static OPERATION_MODE_DRY: 4;
+
   static OPERATION_MODES: {
     AUTO: 0;
     COOL: 1;

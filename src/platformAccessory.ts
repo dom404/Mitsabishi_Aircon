@@ -212,33 +212,34 @@ export class WFRACAccessory {
       this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.device.status.presetTemp);
     }
 
-    if (this.device.status.operationMode !== null && this.device.status.operationMode !== undefined) {
-      let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-      let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+    let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+    let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
 
-      if (this.device.status.operationMode === 1) {
-        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
-      } else if (this.device.status.operationMode === 2) {
+    if (this.device.status.operation && this.device.status.operationMode === DeviceStatus.OPERATION_MODE_COOL) {
+      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
+      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
+    } else if (this.device.status.operation && this.device.status.operationMode === DeviceStatus.OPERATION_MODE_HEAT) {
+      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
+      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
+    } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODE_AUTO) {
+      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
+      if (this.device.status.isAutoHeating) {
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
-        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
-      } else if (this.device.status.operationMode === 0) {
-        // TODO
-        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
-      } else if (this.device.status.operationMode === 3) {
-        // TODO
-        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
-      } else if (this.device.status.operationMode === 4) {
-        // TODO
-        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+      } else {
+        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
       }
-
-      this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, currentHeatingCoolingState);
-      this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, targetHeatingCoolingState);
+    } else if (this.device.status.operationMode === 3) {
+      // TODO
+      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+    } else if (this.device.status.operationMode === 4) {
+      // TODO
+      currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+      targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
     }
+
+    this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, currentHeatingCoolingState);
+    this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, targetHeatingCoolingState);
 
     this.refreshTimeout = setTimeout(() => this.refreshStatus(), 10000);
 
