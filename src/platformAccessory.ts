@@ -216,21 +216,21 @@ export class WFRACAccessory {
       let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
       let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
 
-      if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.COOL) {
+      if (this.device.status.operationMode === 1) {
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.COOL;
-      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.HEAT) {
+      } else if (this.device.status.operationMode === 2) {
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
-      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.AUTO) {
+      } else if (this.device.status.operationMode === 0) {
         // TODO
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
-      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.FAN) {
+      } else if (this.device.status.operationMode === 3) {
         // TODO
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
-      } else if (this.device.status.operationMode === DeviceStatus.OPERATION_MODES.DRY) {
+      } else if (this.device.status.operationMode === 4) {
         // TODO
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
