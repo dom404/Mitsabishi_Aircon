@@ -24,6 +24,7 @@ export class WFRACAccessory {
     this.deviceName = accessory.context.device.name;
     this.ipAddress = ip;
     this.operatorId = 'E0F96719-367D-4D03-8A2C-D8F935486AFD'; // this.platform.api.hap.uuid.generate('HomebridgeMHIWFRAC').toString().toUpperCase()";
+    // TODO: we should create a new operatorId for the platform and register it to the device.
     this.device = new DeviceClient(this.ipAddress, this.port, this.operatorId, this.deviceName, this.platform.log);
 
     // set accessory information
@@ -164,24 +165,24 @@ export class WFRACAccessory {
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.HEAT:
         this.platform.log.info('Setting HEAT');
+        this.device.setOperationMode(2);
         if (!this.device.status.operation) {
           this.device.setOperation(true);
         }
-        this.device.setOperationMode(2);
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.COOL:
         this.platform.log.info('Setting COOL');
+        this.device.setOperationMode(1);
         if (!this.device.status.operation) {
           this.device.setOperation(true);
         }
-        this.device.setOperationMode(1);
         break;
       case this.platform.Characteristic.TargetHeatingCoolingState.AUTO:
         this.platform.log.info('Setting AUTO');
+        this.device.setOperationMode(0);
         if (!this.device.status.operation) {
           this.device.setOperation(true);
         }
-        this.device.setOperationMode(0);
         break;
     }
   }
