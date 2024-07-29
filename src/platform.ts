@@ -60,7 +60,7 @@ export class HomebridgeMHIWFRACPlatform implements DynamicPlatformPlugin {
     const bonjourService = bonjour();
 
     // Start looking for devices advertising _beaver._tcp service
-    const browser = bonjourService.find({type: 'beaver', protocol: 'tcp'},
+    bonjourService.find({type: 'beaver', protocol: 'tcp'},
       (service) => {
         service.addresses.forEach((address) => {
           this.log.info('Discovered device:', service.name, address);
@@ -71,11 +71,11 @@ export class HomebridgeMHIWFRACPlatform implements DynamicPlatformPlugin {
           const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
 
           if (existingAccessory) {
-          // Accessory exists, restore from cache
+            // Accessory exists, restore from cache
             this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
             new WFRACAccessory(this, existingAccessory, address);
           } else {
-          // Accessory does not exist, create a new one
+            // Accessory does not exist, create a new one
             this.log.info('Adding new accessory:', service.name);
             const accessory = new this.api.platformAccessory(service.name, uuid);
 
@@ -93,10 +93,5 @@ export class HomebridgeMHIWFRACPlatform implements DynamicPlatformPlugin {
           }
         });
       });
-
-    // Stop looking for devices after 10 seconds
-    setTimeout(() => {
-      browser.stop();
-    }, 10000);
   }
 }
