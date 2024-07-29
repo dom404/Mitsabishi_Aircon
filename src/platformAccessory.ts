@@ -43,6 +43,8 @@ export class WFRACAccessory {
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
       .setProps({minValue: 18, maxValue: 30, minStep: 0.5});
 
+    this.fanService.getCharacteristic(this.platform.Characteristic.RotationSpeed).setProps({minValue: 0, maxValue: 100, minStep: 25});
+
     this.dehumidifierService.getCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState)
       .setProps({validValues: [this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER]});
     this.dehumidifierService.getCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState)
@@ -148,9 +150,6 @@ export class WFRACAccessory {
           currentFanActive = this.platform.Characteristic.Active.INACTIVE;
           currentFanState = this.platform.Characteristic.CurrentFanState.IDLE;
         }
-
-        targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
-
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
       }
     }
@@ -162,7 +161,7 @@ export class WFRACAccessory {
     this.fanService.updateCharacteristic(this.platform.Characteristic.CurrentFanState, currentFanState);
 
     const fanSpeed = this.device.status.airFlow * 25;
-    if (fanSpeed === 0 || this.device.status.operationMode === 4) {
+    if (this.device.status.airFlow === 0 || this.device.status.operationMode === 4) {
       targetFanState = this.platform.Characteristic.TargetFanState.AUTO;
     } else {
       targetFanState = this.platform.Characteristic.TargetFanState.MANUAL;
