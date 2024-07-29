@@ -46,16 +46,16 @@ export class DeviceStatus {
   electric: number;
   entrust: boolean;
   errorCode: string;
-  indoorTemp: number;
+  indoorTemp: number | null;
   isAutoHeating: boolean;
   isSelfCleanOperation: boolean;
   isSelfCleanReset: boolean;
   isVacantProperty: number;
   modelNo: number;
   operation: boolean;
-  operationMode: number;
-  outdoorTemp: number;
-  presetTemp: number;
+  operationMode: number | null;
+  outdoorTemp: number | null;
+  presetTemp: number | null;
   windDirectionLR: number;
   windDirectionUD: number;
 
@@ -65,16 +65,16 @@ export class DeviceStatus {
     this.electric = 0;
     this.entrust = false;
     this.errorCode = '';
-    this.indoorTemp = -1.0;
+    this.indoorTemp = null;
     this.isAutoHeating = false;
     this.isSelfCleanOperation = false;
     this.isSelfCleanReset = false;
     this.isVacantProperty = 0;
     this.modelNo = 0;
     this.operation = false;
-    this.operationMode = -1;
-    this.outdoorTemp = -1.0;
-    this.presetTemp = -1.0;
+    this.operationMode = null;
+    this.outdoorTemp = null;
+    this.presetTemp = null;
     this.windDirectionLR = -1;
     this.windDirectionUD = -1;
   }

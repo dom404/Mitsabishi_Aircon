@@ -205,9 +205,12 @@ export class WFRACAccessory {
       this.platform.log.info(`Status: ${JSON.stringify(status)}`);
     });
 
-    this.thermostatService.updateCharacteristic(this.platform.Characteristic.TemperatureDisplayUnits, this.platform.Characteristic.TemperatureDisplayUnits.CELSIUS);
-    this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.device.status.indoorTemp);
-    this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.device.status.presetTemp);
+    if (this.device.status.indoorTemp) {
+      this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, this.device.status.indoorTemp);
+    }
+    if (this.device.status.presetTemp) {
+      this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetTemperature, this.device.status.presetTemp);
+    }
 
     let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
     let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
