@@ -59,142 +59,6 @@ export class WFRACAccessory {
 
   }
 
-  // getActive(): CharacteristicValue {
-  //   // this.checkValid();
-  //   return this.device.status.operation ? this.platform.Characteristic.Active.ACTIVE : this.platform.Characteristic.Active.INACTIVE;
-  // }
-  //
-  // setActive(value: CharacteristicValue) {
-  //   // this.checkValid();
-  //   this.platform.log.info(`Setting power to ${value}`);
-  //   const newStatus = this.device.status;
-  //   newStatus.operation = value === this.platform.Characteristic.Active.ACTIVE;
-  //   this.device.setDeviceStatus(newStatus);
-  // }
-
-  // getCurrentTemperature(): CharacteristicValue {
-  //   // this.checkValid();
-  //   return this.device.status.indoorTemp;
-  // }
-  //
-  // getTargetTemperature(): CharacteristicValue {
-  //   // this.checkValid();
-  //   return this.device.status.presetTemp;
-  // }
-  //
-  // setTargetTemperature(value: CharacteristicValue) {
-  //   // this.checkValid();
-  //   this.platform.log.info(`Setting target temperature to ${value}`);
-  //   const newStatus = this.device.status;
-  //   newStatus.presetTemp = value as number;
-  //   this.device.setDeviceStatus(newStatus);
-  // }
-  //
-  // getCurrentHeatingCoolingState(): CharacteristicValue {
-  //   // this.checkValid();
-  //   this.platform.log.info(`Current status: ${this.device.status}`);
-  //   this.platform.log.info(`Current mode: ${this.device.status.operationMode}`);
-  //
-  //   switch (this.device.status.operationMode) {
-  //     case DeviceStatus.OPERATION_MODES.auto:
-  //       return this.platform.Characteristic.CurrentHeatingCoolingState.OFF; // TODO
-  //     case DeviceStatus.OPERATION_MODES.cool:
-  //       return this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
-  //     case DeviceStatus.OPERATION_MODES.heat:
-  //       return this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
-  //     case DeviceStatus.OPERATION_MODES.fan:
-  //       return this.platform.Characteristic.CurrentHeatingCoolingState.OFF; // TODO
-  //     case DeviceStatus.OPERATION_MODES.dry:
-  //       return this.platform.Characteristic.CurrentHeatingCoolingState.OFF; // TODO
-  //     default:
-  //       return this.platform.Characteristic.CurrentHeatingCoolingState.OFF; // TODO
-  //   }
-  // }
-  //
-  // getTargetHeatingCoolingState(): CharacteristicValue {
-  //   // this.checkValid();
-  //   if (this.device.status === undefined || this.device.status.operationMode === undefined) {
-  //     return this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-  //   }
-  //
-  //   switch (this.device.status.operationMode) {
-  //     case DeviceStatus.OPERATION_MODES.auto:
-  //       return this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
-  //     case DeviceStatus.OPERATION_MODES.cool:
-  //       return this.platform.Characteristic.TargetHeatingCoolingState.COOL;
-  //     case DeviceStatus.OPERATION_MODES.heat:
-  //       return this.platform.Characteristic.TargetHeatingCoolingState.HEAT;
-  //     case DeviceStatus.OPERATION_MODES.fan:
-  //       return this.platform.Characteristic.TargetHeatingCoolingState.OFF; // TODO
-  //     case DeviceStatus.OPERATION_MODES.dry:
-  //       return this.platform.Characteristic.TargetHeatingCoolingState.OFF; // TODO
-  //     default:
-  //       return this.platform.Characteristic.TargetHeatingCoolingState.OFF; // TODO
-  //   }
-  // }
-  //
-  // setTargetHeatingCoolingState(value: CharacteristicValue) {
-  //   // this.checkValid();
-  //   this.platform.log.info(`Setting mode to ${value}`);
-  //   const newStatus = this.device.status;
-  //   switch (value) {
-  //     case this.platform.Characteristic.TargetHeatingCoolingState.AUTO:
-  //       newStatus.operationMode = DeviceStatus.OPERATION_MODES.auto;
-  //       break;
-  //     case this.platform.Characteristic.TargetHeatingCoolingState.COOL:
-  //       newStatus.operationMode = DeviceStatus.OPERATION_MODES.cool;
-  //       break;
-  //     case this.platform.Characteristic.TargetHeatingCoolingState.HEAT:
-  //       newStatus.operationMode = DeviceStatus.OPERATION_MODES.heat;
-  //       break;
-  //     case this.platform.Characteristic.TargetHeatingCoolingState.OFF:
-  //       newStatus.operationMode = DeviceStatus.OPERATION_MODES.fan; // TODO
-  //       break;
-  //     default:
-  //       this.platform.log.error(`Invalid mode: ${value}`);
-  //       return;
-  //   }
-  //   this.device.setDeviceStatus(newStatus);
-  // }
-  //
-  // getDehumidifierActive(): CharacteristicValue {
-  //   // this.checkValid();
-  //   return this.device.status.operationMode === DeviceStatus.OPERATION_MODES.dry ? this.platform.Characteristic.Active.ACTIVE : this.platform.Characteristic.Active.INACTIVE;
-  // }
-  //
-  // setDehumidifierActive(value: CharacteristicValue) {
-  //   // this.checkValid();
-  //   this.platform.log.info(`Setting dehumidifier to ${value}`);
-  //   const newStatus = this.device.status;
-  //   newStatus.operationMode = value === this.platform.Characteristic.Active.ACTIVE ? DeviceStatus.OPERATION_MODES.dry : DeviceStatus.OPERATION_MODES.auto;
-  //   this.device.setDeviceStatus(newStatus);
-  // }
-  //
-  // getCurrentHumidifierDehumidifierState(): CharacteristicValue {
-  //   return this.device.status.operationMode === DeviceStatus.OPERATION_MODES.dry ? this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING : this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE;
-  // }
-  //
-  // getTargetHumidifierDehumidifierState(): CharacteristicValue {
-  //   return this.device.status.operationMode === DeviceStatus.OPERATION_MODES.dry ? this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER : this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER_OR_DEHUMIDIFIER;
-  // }
-  //
-  // setTargetHumidifierDehumidifierState(value: CharacteristicValue) {
-  //   this.platform.log.info(`Setting dehumidifier mode to ${value}`);
-  //   const newStatus = this.device.status;
-  //   switch (value) {
-  //     case this.platform.Characteristic.TargetHumidifierDehumidifierState.HUMIDIFIER_OR_DEHUMIDIFIER:
-  //       newStatus.operationMode = DeviceStatus.OPERATION_MODES.auto;
-  //       break;
-  //     case this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER:
-  //       newStatus.operationMode = DeviceStatus.OPERATION_MODES.dry;
-  //       break;
-  //     default:
-  //       this.platform.log.error(`Invalid dehumidifier mode: ${value}`);
-  //       return;
-  //   }
-  //   this.device.setDeviceStatus(newStatus);
-  // }
-
 
   refreshStatus() {
     if (this.refreshTimeout) {
@@ -225,7 +89,7 @@ export class WFRACAccessory {
       if (this.device.status.operationMode === 0 || this.device.status.operationMode === -1) {
         this.platform.log.info('Auto');
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
-        if (this.device.status.isAutoHeating) {
+        if (this.device.status.coolHotJudge) {
           currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
         } else {
           currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
@@ -252,6 +116,4 @@ export class WFRACAccessory {
     this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, currentHeatingCoolingState);
     this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, targetHeatingCoolingState);
   }
-
 }
-
