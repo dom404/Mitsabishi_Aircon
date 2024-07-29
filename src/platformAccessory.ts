@@ -13,7 +13,7 @@ export class WFRACAccessory {
 
   private thermostatService: Service;
   // private fanService: Service;
-  // private dehumidifierService: Service;
+  private dehumidifierService: Service;
   private refreshTimeout: NodeJS.Timeout | null = null;
 
   constructor(
@@ -34,7 +34,7 @@ export class WFRACAccessory {
 
     this.thermostatService = this.accessory.getService(this.platform.Service.Thermostat) || this.accessory.addService(this.platform.Service.Thermostat);
     // this.fanService = this.accessory.getService(this.platform.Service.Fanv2) || this.accessory.addService(this.platform.Service.Fanv2);
-    // this.dehumidifierService = this.accessory.getService(this.platform.Service.HumidifierDehumidifier) || this.accessory.addService(this.platform.Service.HumidifierDehumidifier);
+    this.dehumidifierService = this.accessory.getService(this.platform.Service.HumidifierDehumidifier) || this.accessory.addService(this.platform.Service.HumidifierDehumidifier);
 
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TemperatureDisplayUnits)
       .onGet(() => this.platform.Characteristic.TemperatureDisplayUnits.CELSIUS);
@@ -42,6 +42,9 @@ export class WFRACAccessory {
       .setProps({minValue: DeviceStatus.indoorTempList.at(0), maxValue: DeviceStatus.indoorTempList.at(-1), minStep: 0.1});
     this.thermostatService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
       .setProps({minValue: 18, maxValue: 30, minStep: 0.5});
+
+    // TODO: we should implement current relative humidity to be compliant with the specs, but we do not know any value. Perhaps hardcoding 50%?
+
     this.refreshStatus();
 
     // this.dehumidifierService.getCharacteristic(this.platform.Characteristic.Active)
@@ -85,6 +88,10 @@ export class WFRACAccessory {
     let currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
     let targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
 
+    let currentDehumidifierActive = this.platform.Characteristic.Active.INACTIVE;
+    let currentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.INACTIVE;
+    let targetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER;
+
     if (this.device.status.operation) {
       if (this.device.status.operationMode === 0 || this.device.status.operationMode === -1) {
         this.platform.log.info('Auto');
@@ -107,13 +114,25 @@ export class WFRACAccessory {
         currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
         targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
       } else if (this.device.status.operationMode === 4) {
-        // TODO
-        currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
-        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+        this.platform.log.info('Drying');
+        currentDehumidifierActive = this.platform.Characteristic.Active.ACTIVE;
+        currentHumidifierDehumidifierState = this.platform.Characteristic.CurrentHumidifierDehumidifierState.DEHUMIDIFYING;
+        targetHumidifierDehumidifierState = this.platform.Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER;
+
+        targetHeatingCoolingState = this.platform.Characteristic.TargetHeatingCoolingState.AUTO;
+        if (this.device.status.coolHotJudge) { // TODO check if this value is correct, otherwise we should set it to OFF
+          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.HEAT;
+        } else {
+          currentHeatingCoolingState = this.platform.Characteristic.CurrentHeatingCoolingState.COOL;
+        }
       }
     }
 
     this.thermostatService.updateCharacteristic(this.platform.Characteristic.CurrentHeatingCoolingState, currentHeatingCoolingState);
     this.thermostatService.updateCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState, targetHeatingCoolingState);
+
+    this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.Active, currentDehumidifierActive);
+    this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.CurrentHumidifierDehumidifierState, currentHumidifierDehumidifierState);
+    this.dehumidifierService.updateCharacteristic(this.platform.Characteristic.TargetHumidifierDehumidifierState, targetHumidifierDehumidifierState);
   }
 }
