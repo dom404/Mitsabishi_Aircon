@@ -5,11 +5,17 @@
   "schema": {
     "type": "object",
     "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "required": true,
+        "default": "Homebrdige MHI WF-RAC"
+      },
       "operatorId": {
         "title": "Operator ID (uuid)",
         "type": "string",
         "required": true,
-        "default": "fbfc7e2c-aee6-461b-8f97-532845592145",
+        "default": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         "description": "The operator ID of the Smart M-Air app. See https://github.com/JobDoesburg/homebridge-mhi-wfrac for more information."
       }
     }
