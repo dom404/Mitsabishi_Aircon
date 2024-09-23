@@ -1,7 +1,7 @@
 {
   "displayName": "Homebridge MHI WF-RAC",
   "name": "homebridge-mhi-wfrac",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A homebridge plugin for Mitshubishi WF-RAC aircos (using the Smart M-Air app)",
   "license": "Apache-2.0",
   "type": "module",
@@ -13,6 +13,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JobDoesburg/homebridge-mhi-wfrac.git"
+  },
+  "funding": {
+    "type" : "paypal",
+    "url" : "https://paypal.me/jobdoesburg"
   },
   "homepage": "https://github.com/JobDoesburg/homebridge-mhi-wfrac",
   "bugs": {

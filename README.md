@@ -1,5 +1,9 @@
 # Homebridge MHI WF-RAC
 
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+[![npm](https://img.shields.io/npm/v/homebridge-mhi-wfrac)](https://www.npmjs.com/package/homebridge-mhi-wfrac)
+[![npm](https://img.shields.io/npm/dt/homebridge-mhi-wfrac)](https://www.npmjs.com/package/homebridge-mhi-wfrac)
+
 This is a Homebridge plugin for Mitsubishi WF-RAC air conditioners controlled by the Smart M-Air app.
 This plugin exposes three services to HomeKit as one device: a thermostat service for HEATing and COOLing (or AUTO), a fan (additional to the thermostat, or standalone for FAN mode), and a dehumidifier.
 The devices are automatically discovered on the local network (using mDNS bonjour).
